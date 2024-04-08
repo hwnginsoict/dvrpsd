@@ -10,10 +10,14 @@ class Network():
         self.links = dict()    #links: dictionary luu cac link
         self.calculate_distance(customers)
 
+        self.total_travel_time = 0  # objective 1
+        self.accepted_dyn_req = 0 # objective 2
+
     def generate_node(self, customers):
         self.nodes = dict()
-        for customer in customers:
-            self.nodes[customer.id] = customer
+        for key, value in customers.items():  
+            print(type(value))  
+            self.nodes[key] = value  
 
     def calculate_distance(self, customers): 
         for i in range(self.num_nodes):
