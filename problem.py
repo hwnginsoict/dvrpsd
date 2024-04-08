@@ -10,6 +10,9 @@ class Problem:
             all = f.readlines()
         self.customers = {}
         self.request = []
+        self.num_vehicle = None
+        self.capacity = None
+        self.network = None
 
         for i in range(len(all)): #nhap du lieu, tao file cac request, customer
             if all[i] == 'NUMBER     CAPACITY\n':
