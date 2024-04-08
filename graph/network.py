@@ -28,5 +28,8 @@ class Network():
         if num_sfcs != -1:
             self.pheromone = np.stack([self.pheromone]*num_sfcs, axis=0)
     
-    def create_constraints(self):
+    def check_constraints(self):
+        ...
+        
+    def calculate_objective(self):
         ...
