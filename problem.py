@@ -22,7 +22,11 @@ class Problem:
                 while (i+3)<len(all):
                     num, x, y, demand, s, e, w = map(float,all[i+3].strip().split())
 
-                    time = np.random.random() * s #set time bang random(0,s), distribution = random, ko uniform
+                    rand = np.random.random()
+                    if rand < 0.25:
+                        time = 0
+                    else:
+                        time = np.random.random() * s #set time bang random(0,s), distribution = random, ko uniform
 
                     req = Request(node = int(num), demand = demand, start = s, end = e, time = time)
                     request.append(req) 
