@@ -18,11 +18,7 @@ class Network():
         self.depot = customers[0]
         self.num_nodes = len(customers)
         self.calculate_distance(customers)
-
-    def generate_node(self, customers):
-        self.nodes = dict()
-        for customer in customers:
-            self.nodes[customer.id] = customer
+        self.customers = customers
 
     def calculate_distance(self, customers): 
         # self.distance = list()    #distance: matran khoang cach giau 2 dinh
