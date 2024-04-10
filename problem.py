@@ -22,7 +22,7 @@ class Problem:
                 while (i+3)<len(all):
                     num, x, y, demand, s, e, w = map(float,all[i+3].strip().split())
 
-                    rand = np.random.random()
+                    rand = np.random.random()   #set 25% request la static (time = 0)
                     if rand < 0.25:
                         time = 0
                     else:

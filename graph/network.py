@@ -5,7 +5,7 @@ class Network():
     def __init__(self, customers: dict):
         self.depot = customers[0]
         self.num_nodes = len(customers)
-        self.nodes = dict()
+        self.nodes = dict()     #link chua cac node, co ca node 0
         self.generate_node(customers)
         self.links = dict()    #links: dictionary luu cac link
         self.calculate_distance(customers)
