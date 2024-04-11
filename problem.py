@@ -35,7 +35,7 @@ class Problem:
                     customers[int(num)] = cus
                     i = i+1
                 break
-        request.remove(request[0]) #bo depot ra khoi request
+        # request.remove(request[0]) #bo depot ra khoi request
 
         self.requests = sorted(request, key=lambda x: x.time)
         self.network = Network(customers)

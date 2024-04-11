@@ -16,7 +16,7 @@ class Network():
     def generate_node(self, customers):
         self.nodes = dict()
         for key, value in customers.items():  
-            print(type(value))  
+            # print(type(value))  
             self.nodes[key] = value  
 
     def calculate_distance(self, customers): 
