@@ -5,6 +5,10 @@ from graph.node import Node
 
 from problem import Problem
 
+from ls.search2 import Search2
+
+import random
+
 class HACO:
     def __init__(self, network, requests, max_capacity):
         self.network = network
@@ -19,12 +23,13 @@ class HACO:
 
     def set_parameter(self):
         self.num_ants = 100
-        self.max_iteration = 30
+        self.max_iteration = 50
 
         self.alpha = 1
         self.beta = 2
         self.rho = 0.1
         self.q = 150
+        # self.
 
         self.best_distance = float('inf')
         self.best_solution = None
@@ -55,19 +60,19 @@ class HACO:
 
 
             for ant in range(self.num_ants):
-                solution = [0] #start from depot
+                solution = [self.depot] #start from depot
                 remain_capacity = self.max_capacity
                 visited = set()
 
                 solution_time = 0
-                current_node = 0
+                current_node = self.depot
 
-                while len(visited) < len(self.sta_requests) -1:  # Visit all customers
+                while len(visited) < len(self.sta_requests) + len(self.dyn_requests) -1:  # Visit all customers
                     probability = self.generate_probability(current_node, candidate_list, visited, remain_capacity, solution_time)
 
                     if len(probability) == 0:  # Check capacity constraint for vehicle
-                        solution.append(0)
-                        current_node = 0
+                        solution.append(self.depot)
+                        current_node = self.depot
                         remain_capacity = self.max_capacity
                         solution_time = 0
                         continue
@@ -77,27 +82,39 @@ class HACO:
                     # print("capa ", remain_capacity)
                     # print(next_node.node)
 
-                    solution.append(next_node.node)
+                    solution.append(next_node)
                     visited.add(next_node.node)
                     remain_capacity -= next_node.demand
 
-                    solution_time += self.network.links[(current_node, next_node.node)].distance
+                    solution_time += self.network.links[(current_node.node, next_node.node)].distance
                     solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                     if remain_capacity < 0:  # Check capacity constraint for vehicle
                         solution.pop()
-                        solution.append(0)
-                        current_node = 0
+                        solution.append(self.depot)
+                        current_node = self.depot
                         remain_capacity = self.max_capacity
                         solution_time = 0
                         continue
 
-                    current_node = next_node.node
+                    current_node = next_node
 
                     # print(solution)
 
 
-                solution.append(0)  # Return to depot
+                solution.append(self.depot)  # Return to depot
+
+
+                #test local search
+                n = random.random()
+                if n > 0.7:
+                    n1 = random.randrange(0, len(solution))
+                    n2 = random.randrange(0, len(solution))
+                    temp1, temp2 = Search2.swap(solution[n1],solution[n2])
+                    solution[n1] = temp1
+                    solution[n2] = temp2
+                    
+
                 solutions.append(solution)
             
             self.update_pheromone(solutions)
@@ -111,7 +128,11 @@ class HACO:
             # self.best_solution = best_solution
             # self.best_distance = best_distance
 
-            print(i, self.best_solution, self.best_distance)
+            print(i, end = " ")
+            for i in range(len(self.best_solution)):
+                print(self.best_solution[i].node, end = " ")
+            print()
+            print(self.best_distance)
 
 
     def generate_probability(self, current_node, candidate_list, visited, remain_capacity, solution_time):
@@ -120,12 +141,13 @@ class HACO:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
-                if solution_time + self.network.links[(current_node, request.node)].distance < request.end:
-                    if solution_time + self.network.links[(current_node, request.node)].distance >= request.start:
-                        total += (self.pheromone[(current_node,request.node)]**self.alpha)*(self.network.links[(current_node,request.node)].distance)  #cong thuc toan hoc cua haco
+                if solution_time + self.network.links[(current_node.node, request.node)].distance < request.end:
+                    if solution_time + self.network.links[(current_node.node, request.node)].distance >= request.start:
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)*(self.network.links[(current_node.node,request.node)].distance)  #cong thuc toan hoc cua haco
                         probability.append((request,total))
                     else:
-                        total += (self.pheromone[(current_node,request.node)]**self.alpha)*(self.network.links[(current_node,request.node)].distance + request.end - (self.network.links[(current_node,request.node)].distance + solution_time))  #doi request bat dau
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)*(self.network.links[(current_node.node,request.node)].distance 
+                                                                                                 + request.end - (self.network.links[(current_node.node,request.node)].distance + solution_time))  #doi request bat dau
                         probability.append((request,total))
 
         probability = [(node, prob / total) for node, prob in probability]
@@ -158,20 +180,20 @@ class HACO:
             for i in range(len(solution) - 1):
                 current_node = solution[i]
                 next_node = solution[i + 1]
-                delta_pheromone[current_node][next_node] += self.q / self.calculate_solution_distance(solution)
+                delta_pheromone[current_node.node][next_node.node] += self.q / self.calculate_solution_distance(solution)
 
         self.pheromone = (1 - self.rho) * self.pheromone + delta_pheromone
 
     def calculate_solution_distance(self, solution):
         distance = 0
         for i in range(len(solution)-1):
-            distance += self.network.links[(solution[i],solution[i + 1])].distance
+            distance += self.network.links[(solution[i].node,solution[i + 1].node)].distance
         return distance
 
 
 if __name__ == "__main__":
     np.random.seed()
-    problem1 = Problem("data/C200/C1_2_1.TXT")
+    problem1 = Problem("data/C100/C101.TXT")
     network = problem1.network
     requests = problem1.requests
     for request in requests:

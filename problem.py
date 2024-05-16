@@ -44,5 +44,7 @@ class Problem:
 if __name__ == "__main__": #nay de test thoi
     np.random.seed(1)
     problem1 = Problem("data/C200/C1_2_1.TXT")
+    k=0
     for i in problem1.requests:
-        print(i.time)
+        print(k, i.time)
+        k +=1
