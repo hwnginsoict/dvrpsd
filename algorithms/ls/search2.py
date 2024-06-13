@@ -5,11 +5,11 @@ class Search2:
         self.route1 = route1
         self.route2 = route2
     
-    def swap(self, route1, route2):
-        copy_route1 = copy.deepcopy(route1)
-        copy_route2 = copy.deepcopy(route2)
-        n1 = random.randrange(0, len(route1) - 1)
-        n2 = random.randrange(0, len(route2) - 1)
+    def swap(self):
+        copy_route1 = copy.deepcopy(self.route1)
+        copy_route2 = copy.deepcopy(self.route2)
+        n1 = int(random.random()*(len(self.route1)-1))
+        n2 = int(random.random()*(len(self.route2)-1))
         temp = copy_route1[n1]
         copy_route1[n1] = copy_route2[n2]
         copy_route2[n2] = temp

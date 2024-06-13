@@ -13,6 +13,9 @@ class Problem:
         self.num_vehicle = None
         self.capacity = None
         self.network = None
+        self.dynamic_prob = 0.25
+        self.seed = 21
+        np.random.seed(self.seed)
 
         for i in range(len(all)): #nhap du lieu, tao file cac request, customer
             if all[i] == 'NUMBER     CAPACITY\n':
@@ -23,7 +26,7 @@ class Problem:
                     num, x, y, demand, s, e, w = map(float,all[i+3].strip().split())
 
                     rand = np.random.random()   #set 25% request la static (time = 0)
-                    if rand < 0.25:
+                    if rand < self.dynamic_prob:
                         time = 0
                     else:
                         time = np.random.random() * s #set time bang random(0,s), distribution = random, ko uniform
@@ -42,9 +45,8 @@ class Problem:
 
         
 if __name__ == "__main__": #nay de test thoi
-    np.random.seed(1)
     problem1 = Problem("data/C200/C1_2_1.TXT")
     k=0
     for i in problem1.requests:
-        print(k, i.time)
-        k +=1
+        print(i.node, i.time)
+        

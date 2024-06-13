@@ -2,18 +2,28 @@ import copy
 import random
 
 class Search1:
-    def __init__(self, route: list, max_capacity, candidate_list):
+    def __init__(self, route: list, max_capacity, network):
         self.route = route
         self.max_capacity = max_capacity
-        self.candidate_list = candidate_list
+        self.network = network
 
-    def search1(self, route: list):
-        copy_route = copy.deepcopy(route)
-
-        if check_capacity(copy_route, self.max_capacity) and check_time(copy_route, self.candidate_list):
+    def search1(self):
+        copy_route = copy.deepcopy(self.route)
+        n1 = int(random.random()*(len(self.route)-1))
+        n2 = int(random.random()*(len(self.route)-1))
+        temp = copy_route[n1]
+        copy_route[n1] = copy_route[n2]
+        copy_route[n2] = temp
+        if self.check_capacity(copy_route, self.max_capacity) and self.check_time(copy_route):
             return copy_route
-        else: return route
+        else: return self.route
 
+    def calculate_solution_distance(self, solution):
+        if self.check_capacity(solution, self.max_capacity) and self.check_time(solution): return float('inf')
+        distance = 0
+        for i in range(len(solution)-1):
+            distance += self.network.links[(solution[i].node,solution[i + 1].node)].distance
+        return distance
 
     def check_capacity(self, route: list, max_capacity):
         #check capacity
@@ -24,15 +34,14 @@ class Search1:
             return False
         return True
         
-    def check_time(self, route: list, candidate_list):
+    def check_time(self, route: list):
         #check time window
-        copy_route = copy.deepcopy(route)
         time = 0
-        for i in range(len(copy_route)-1):
-            time = time + s_time[copy_route[i]] + distance(copy_route[i], copy_route[i+1])
-            if time < e_time[copy_route[i+1]]:
-                time = e_time[route2[i+1]]
-            if time > l_time[route2[i+1]]:
+        for i in range(len(route)-1):
+            time = time + route[i].start + self.network.links[(route[i].node, route[i+1].node)].distance
+            if time < route[i+1].start:
+                time = route[i+1].start
+            if time > route[i+1].end:
                 return False
         return True
 
