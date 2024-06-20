@@ -4,7 +4,7 @@ from graph import Network
 import numpy as np
 
 
-class Problem:
+class ProblemTD:
     def __init__(self, instance):
         with open(instance, 'r') as f:
             all = f.readlines()
@@ -13,7 +13,7 @@ class Problem:
         self.num_vehicle = None
         self.capacity = None
         self.network = None
-        self.dynamic_prob = 0.10
+        self.dynamic_prob = 0.25
         self.seed = 21
         np.random.seed(self.seed)
 
@@ -24,25 +24,26 @@ class Problem:
 
                 while (i+3)<len(all):
                     num, x, y, demand, s, e, w = map(float,all[i+3].strip().split())
-                
-                    if e < 60:
-                        time = 0
-                    
-                    else:
-                        rand = np.random.random()   #set 25% request la static (time = 0)
-                        if rand < self.dynamic_prob:
-                            time = 0
-                        else:
-                            time = max(np.random.random() * (s-20),0) #set time bang random(0,s), distribution = random, uniform
 
-                    req = Request(node = int(num), demand = demand, start = s, end = e, time = time)
+                    rand = np.random.random()   #set 25% request la static (time = 0)
+                    if rand < self.dynamic_prob:
+                        time = 0
+                    else:
+                        time = np.random.random() * s #set time bang random(0,s), distribution = random, uniform
+
+                    rand = np.random.random()
+                    drone_serve = 1
+                    if rand < 0.5:
+                        drove_serve = 0
+
+                    req = Request(node = int(num), demand = demand, start = s, end = e, time = time, drone_serve = drone_serve)
                     request.append(req) 
 
                     cus = Node(id = int(num), x = x, y = y)
                     customers[int(num)] = cus
                     i = i+1
                 break
-        # request.remove(request[0]) #bo depot ra khoi request
+        # self.depot = request.pop(0) #bo depot ra khoi request
 
         self.requests = sorted(request, key=lambda x: x.time)
         self.network = Network(customers)
@@ -50,10 +51,8 @@ class Problem:
         
 if __name__ == "__main__": #nay de test thoi
     np.random.seed(1)
-    problem1 = Problem("data/C100/c101.TXT")
-    count = 0
+    problem1 = ProblemTD("data/C100/C101.TXT")
+    k=0
     for i in problem1.requests:
-        print(i.node, i.time, i.start, i.end)
-        if i.time ==0: count += 1
-    print(1-count/len(problem1.requests))
+        print(i.node, i.time)
         

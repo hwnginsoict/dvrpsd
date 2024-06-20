@@ -330,8 +330,9 @@ class HACO:
 
 
 if __name__ == "__main__":
-    np.random.seed()
-    problem1 = Problem("data/C100/C101.TXT")
+    seed = 1
+    np.random.seed(seed)
+    problem1 = Problem("data/C100/c101.TXT")
     network = problem1.network
     requests = problem1.requests
     max_capacity = problem1.capacity

@@ -22,8 +22,12 @@ class Network():
     def calculate_distance(self, customers): 
         for i in range(self.num_nodes):
             for j in range(i, self.num_nodes):
-                self.links[(i,j)] = Link(customers[i], customers[j])
-                self.links[(j,i)] = Link(customers[j], customers[i])
+                if i==j: 
+                    self.links[(i,j)] = float('inf')
+                    self.links[(j,i)] = float('inf')
+                else:
+                    self.links[(i,j)] = Link(customers[i], customers[j])
+                    self.links[(j,i)] = Link(customers[j], customers[i])
     
     def create_constraints(self):
         ...
