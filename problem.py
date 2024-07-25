@@ -33,7 +33,7 @@ class Problem:
                         if rand < self.dynamic_prob:
                             time = 0
                         else:
-                            time = max(np.random.random() * (s-20),0) #set time bang random(0,s), distribution = random, uniform
+                            time = max(np.random.random() * (s-60),0) #set time bang random(0,s), distribution = random, uniform
 
                     req = Request(node = int(num), demand = demand, start = s, end = e, time = time)
                     request.append(req) 

@@ -31,7 +31,7 @@ class DACO:
         
 
     def set_parameter(self):
-        self.num_ants = 50
+        self.num_ants = 200
         self.max_iteration = 50
 
         self.alpha = 1

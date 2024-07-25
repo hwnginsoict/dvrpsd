@@ -32,9 +32,9 @@ class ProblemTD:
                         time = np.random.random() * s #set time bang random(0,s), distribution = random, uniform
 
                     rand = np.random.random()
-                    drone_serve = 1
-                    if rand < 0.5:
-                        drove_serve = 0
+                    drone_serve = 0
+                    if rand < 0.3:  #set probability of customer being served by drone
+                        drone_serve = 0
 
                     req = Request(node = int(num), demand = demand, start = s, end = e, time = time, drone_serve = drone_serve)
                     request.append(req) 

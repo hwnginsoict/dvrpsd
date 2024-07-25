@@ -1,0 +1,4 @@
+06/07/2024
+- Thêm swapstar từ deepaco vào cho bài toán
+- Hoàn thành code problem đánh giá Truck-Drone
+- Sửa nốt bug từ việc chọn xe động
