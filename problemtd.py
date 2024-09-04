@@ -8,13 +8,31 @@ import pandas as pd
 
 class ProblemTD:
     def __init__(self, instance):
-        
-
         customers = {}
         request = []
-        self.num_vehicle = None
-        self.capacity = None
-        self.network = None
+        self.num_vehicle = 25
+
+        df = pd.read_csv(instance)
+        customer_data = df.iloc[0:]
+
+        for num, row in customer_data.iterrows():
+            x, y, demand, s, e, w, drone_serve, time = row
+
+            req = Request(node=int(num), demand=demand, start=s, end=e, time=time, drone_serve=drone_serve)
+            request.append(req)
+
+            cus = Node(id=int(num), x=x, y=y)
+            customers[int(num)] = cus
+
+        self.requests = sorted(request, key=lambda x: x.time)
+        self.network = Network(customers)
+
+        self.truck = Truck(velocity=1, capacity=1000, w=10, costf=0.13) 
+        self.drone = Drone(velocity=1.6, capacity=15, w=5, costf=0.1, endure=135, launch=5, recover=5)
+
+    def generate_sample(self, instance):
+        customers = {}
+        request = []
         self.dynamic_prob = 0.25
         self.seed = 21
         np.random.seed(self.seed)
@@ -29,7 +47,7 @@ class ProblemTD:
 
             rand = np.random.random()  # set 25% request as static (time = 0)
             if rand < self.dynamic_prob:
-                time = 0
+                time = float(0)
             else:
                 time = np.random.random() * s  # set time as random(0,s), distribution = random, uniform
 
@@ -54,7 +72,7 @@ class ProblemTD:
         
 if __name__ == "__main__": #nay de test thoi
     np.random.seed(1)
-    problem1 = ProblemTD("data/VRPTWD/VRPTWD-instance-112.xlsx")
+    problem1 = ProblemTD("dvrpsd/data/dvrptw/h100r201.csv")
     for i in problem1.requests:
         print(i.node, i.time)
 

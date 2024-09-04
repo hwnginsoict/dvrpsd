@@ -297,6 +297,9 @@ class HACO:
                 distance += self.network.links[(solution[i][j].node,solution[i][j+1].node)].distance
         return distance
     
+
+    # def add_drone
+    
     
     def check_capacity(self, route: list, max_capacity):
         #check capacity
@@ -332,7 +335,7 @@ class HACO:
 if __name__ == "__main__":
     seed = 1
     np.random.seed(seed)
-    problem1 = Problem("data/C100/c101.TXT")
+    problem1 = Problem("data/Solomon/C100/c101.TXT")
     network = problem1.network
     requests = problem1.requests
     max_capacity = problem1.capacity

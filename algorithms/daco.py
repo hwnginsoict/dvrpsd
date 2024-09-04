@@ -31,8 +31,11 @@ class DACO:
         
 
     def set_parameter(self):
-        self.num_ants = 200
-        self.max_iteration = 50
+        self.num_ants_static = 50
+        self.max_iteration_static = 50
+
+        self.num_ants_dynamic = 20
+        self.max_iteration_dynamic = 20
 
         self.alpha = 1
         self.beta = 2
@@ -52,7 +55,7 @@ class DACO:
 
 
     def static_routing(self):
-        for i in range (self.max_iteration):
+        for i in range (self.max_iteration_static):
             solutions = list()
             candidate_list = list()
             for request in self.sta_requests:
@@ -67,7 +70,7 @@ class DACO:
 
             # print("hello this is", self.depot.node)
 
-            for ant in range(self.num_ants):
+            for ant in range(self.num_ants_static):
                 solution = [[self.depot]] #start from depot
                 pointer = 0 #index of current
                 remain_capacity = self.max_capacity
@@ -97,7 +100,7 @@ class DACO:
                     visited.add(next_node.node)
                     remain_capacity -= next_node.demand
 
-                    solution_time += self.network.links[(current_node.node, next_node.node)].distance
+                    solution_time += self.network.links[(current_node.node, next_node.node)] 
                     solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                     if remain_capacity < 0:  # Check capacity constraint for vehicle
@@ -161,6 +164,9 @@ class DACO:
                 """
 
                 solutions.append(solution)
+
+                # print("STATIC ROUTE")
+                # self.print_route(solution)
                 
 
                 #test local search
@@ -193,8 +199,8 @@ class DACO:
             # self.best_distance = best_distance
 
             
-            # print("Best: ", self.best_distance)
-            # self.print_route(self.best_solution)
+            print("Best: ", self.best_distance)
+            self.print_route(self.best_solution)
             
 
         # print(self.pheromone)
@@ -239,36 +245,19 @@ class DACO:
                 if i.time < time and (i not in handling_request) and (i.node not in assigned):
                     handling_request.append(i)
                     all_request.append(i)
-                    # print(i.node)
-                    # for request in self.dyn_requests:
-                    #     print(request.node, end = " ")
-                    # print()
-
-                    # for request in coming_request:
-                    #     print(request.node, end = " ")
-                    # print()
-
-                    print("HANDLING")
-                    for request in handling_request:
-                        print(request.node, end =" ")
-                    print()
-                    print("HANDLING")
-
-                    # print(i.node)
 
                     if i in coming_request:
                         coming_request.remove(i)
-                # else: break          
-            
-            # for i in handling_request:
-            #     print(i.node, end = ' ')
-            # print()
 
-            # if len(handling_request) ==0 : print('bewhdbfwhebfrwbgurbgiurwebguirwvb')
+            print("HANDLING")
+            for request in handling_request:
+                print(request.node, end =" ")
+            print()
+            print("HANDLING")  
 
             
             # xu li dinh tuyen lai bang ACO, xu li tren coming_route
-            for ants in range(self.num_ants):
+            for ants in range(self.num_ants_dynamic):
                 solution = copy.deepcopy(self.present_route)
                 pointer = 0
                 remain_capacity = sum(i.demand for i in solution[pointer])
@@ -279,7 +268,7 @@ class DACO:
                 else: 
                     route_time = 0
                     for j in range(1, len(self.present_route[pointer])):
-                        route_time += self.network.links[(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)].distance
+                        route_time += self.network.links[(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)] 
                         route_time = max(route_time, self.planning_route[pointer][j].start)
                     solution_time = route_time
 
@@ -315,7 +304,7 @@ class DACO:
                         else:
                             route_time = 0
                             for j in range(1, len(solution[pointer])):
-                                route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)].distance
+                                route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] 
                                 route_time = max(route_time, solution[pointer][j].start)
                             solution_time = route_time
 
@@ -344,7 +333,7 @@ class DACO:
                     # self.print_route(solution)
                     remain_capacity -= next_node.demand
 
-                    solution_time += self.network.links[(current_node.node, next_node.node)].distance
+                    solution_time += self.network.links[(current_node.node, next_node.node)] 
                     solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                     if remain_capacity < 0:  # Check capacity constraint for vehicle
@@ -359,7 +348,7 @@ class DACO:
                         else:
                             route_time = 0
                             for j in range(1, len(solution[pointer])):
-                                route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)].distance
+                                route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] 
                                 route_time = max(route_time, solution[pointer][j].start)
                             solution_time = route_time
 
@@ -402,7 +391,7 @@ class DACO:
                 else:
                     route_time = 0
                     for j in range(1, len(self.planning_route[i])):
-                        route_time += self.network.links[(self.planning_route[i][j-1].node,self.planning_route[i][j].node)].distance
+                        route_time += self.network.links[(self.planning_route[i][j-1].node,self.planning_route[i][j].node)] 
                         route_time = max(route_time, self.planning_route[i][j].start)
                         # if (self.planning_route[i][j] not in self.present_route[i]):
 
@@ -448,15 +437,15 @@ class DACO:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
-                if solution_time + self.network.links[(current_node.node, request.node)].distance < request.end:
-                    if solution_time + self.network.links[(current_node.node, request.node)].distance >= request.start:
-                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)].distance)**self.beta  #cong thuc toan hoc cua haco
+                if solution_time + self.network.links[(current_node.node, request.node)]  < request.end:
+                    if solution_time + self.network.links[(current_node.node, request.node)]  >= request.start:
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] )**self.beta  #cong thuc toan hoc cua haco
                         probability.append((request,total))
                     else:
-                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)].distance 
-                                                                                                 + request.end - (self.network.links[(current_node.node,request.node)].distance + solution_time))**self.beta  #doi request bat dau
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)]  
+                                                                                                 + request.end - (self.network.links[(current_node.node,request.node)]  + solution_time))**self.beta  #doi request bat dau
                         probability.append((request,total))
-                # else: print("bbbbbbb", request.node, solution_time + self.network.links[(current_node.node, request.node)].distance, request.start, request.end, timetime)
+                # else: print("bbbbbbb", request.node, solution_time + self.network.links[(current_node.node, request.node)] , request.start, request.end, timetime)
                     # print(total)
             # else: print("aaaaaaaaaa")
 
@@ -470,13 +459,13 @@ class DACO:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
-                if solution_time + self.network.links[(current_node.node, request.node)].distance < request.end:
-                    if solution_time + self.network.links[(current_node.node, request.node)].distance >= request.start:
-                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)].distance)**self.beta  #cong thuc toan hoc cua haco
+                if solution_time + self.network.links[(current_node.node, request.node)]  < request.end:
+                    if solution_time + self.network.links[(current_node.node, request.node)]  >= request.start:
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] )**self.beta  #cong thuc toan hoc cua haco
                         probability.append((request,total))
                     else:
-                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)].distance 
-                                                                                                 + request.end - (self.network.links[(current_node.node,request.node)].distance + solution_time))**self.beta  #doi request bat dau
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)]  
+                                                                                                 + request.start - (self.network.links[(current_node.node,request.node)]  + solution_time))**self.beta  #doi request bat dau
                         probability.append((request,total))
 
         probability = [(node, prob / total) for node, prob in probability]
@@ -506,11 +495,11 @@ class DACO:
         # self.pheromone =  (self.pheromone + delta_pheromone)
 
     def calculate_solution_distance(self, solution):
-        if self.check_capacity(solution, self.max_capacity) and self.check_time(solution): return float('inf')
+        if not (self.check_capacity(solution, self.max_capacity) and self.check_time(solution)): return float('inf')
         distance = 0
         for i in range(len(solution)):
             for j in range(len(solution[i])-1):
-                distance += self.network.links[(solution[i][j].node,solution[i][j+1].node)].distance
+                distance += self.network.links[(solution[i][j].node,solution[i][j+1].node)] 
         return distance
     
     
@@ -529,8 +518,9 @@ class DACO:
         #check time window
         time = 0
         for i in range(len(route)):
+            time = 0
             for j in range(len(route[i])-1):
-                time = time + 0 + self.network.links[(route[i][j].node, route[i][j+1].node)].distance
+                time = time + 0 + self.network.links[(route[i][j].node, route[i][j+1].node)] 
                 if time < route[i][j+1].start:
                     time = route[i][j+1].start
                 if time > route[i][j+1].end:
@@ -547,8 +537,9 @@ class DACO:
 
 if __name__ == "__main__":
     np.random.seed(1)
-    problem1 = Problem("data/C100/c101.TXT")
+    problem1 = Problem("data/Solomon/C100/C102.TXT")
     network = problem1.network
     requests = problem1.requests
     max_capacity = problem1.capacity
+    print(max_capacity)
     haco = DACO(network = network, requests = requests, max_capacity = max_capacity)

@@ -7,11 +7,14 @@ class Network():
         self.num_nodes = len(customers)
         self.nodes = dict()     #link chua cac node, co ca node 0
         self.generate_node(customers)
-        self.links = dict()    #links: dictionary luu cac link
+        self.links = np.ones((self.num_nodes, self.num_nodes))    #links: dictionary luu cac link
         self.calculate_distance(customers)
 
         self.total_travel_time = 0  # objective 1
         self.accepted_dyn_req = 0 # objective 2
+        self.WAER = 1.2603 # kg/mile
+        self.PGFER = 0.0003773 # kg/Wh
+        self.AER = 3.3333 # Wh/mile
 
     def generate_node(self, customers):
         self.nodes = dict()
@@ -26,8 +29,8 @@ class Network():
                     self.links[(i,j)] = float('inf')
                     self.links[(j,i)] = float('inf')
                 else:
-                    self.links[(i,j)] = Link(customers[i], customers[j])
-                    self.links[(j,i)] = Link(customers[j], customers[i])
+                    self.links[(i,j)] = Link(customers[i], customers[j]).distance
+                    self.links[(j,i)] = Link(customers[j], customers[i]).distance
     
     def create_constraints(self):
         ...

@@ -1,6 +1,6 @@
 import numpy as np
 from .node import *
-
+ 
 class Link:
     def __init__(self, source: Node, destination: Node):
         self.source = source
