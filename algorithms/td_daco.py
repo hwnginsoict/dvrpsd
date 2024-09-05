@@ -559,7 +559,7 @@ class TD_DACO:
         print(self.calculate_solution_distance(self.present_route))
         print("FINAL")
 
-        self.result = (self.calculate_solution_distance(self.present_route), (100 - self.count_request(self.present_route)))
+        self.result = (self.calculate_carbon_emission(self.present_route), (100 - self.count_request(self.present_route)))
 
     def dyn_generate_probability(self, current_node, candidate_list, visited, remain_capacity, solution_time, timetime):
         probability = list()
