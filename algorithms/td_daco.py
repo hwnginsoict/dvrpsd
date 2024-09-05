@@ -250,9 +250,9 @@ class TD_DACO:
                     if request.node not in assigned:
                         assigned.append(request.node)
 
-            # for route in self.present_route:
-            #     if len(route) == 1:
-            #         self.present_route.remove(route)
+            for route in self.present_route:
+                if len(route) == 1:
+                    self.present_route.remove(route)
 
             print("FIRST PRESENT")
             self.print_routeTD(self.present_route)
@@ -343,24 +343,28 @@ class TD_DACO:
 
             
             # xu li dinh tuyen lai bang ACO, xu li tren coming_route
-            # if time % 80 == 0: 
-            if True:
-                # for m in range(self.max_iteration_dynamic): 
+            if time % 80 == 0: 
+            # if True:
+                self.generate_pheromone()
+                self.update_pheromone([self.best_solution])
+
+                for m in range(self.max_iteration_dynamic): 
                     for ants in range(self.num_ants_dynamic):
                         solution = copy.deepcopy(self.present_route)
                         pointer = 0
-                        remain_capacity = sum(i.demand for i in solution[pointer])
+                        remain_capacity = sum(i.demand for i in solution[0])
                         visited = set()
-                        current_node = self.present_route[pointer][-1]
-                        if self.present_route[pointer][-1].node == 0:
+                        current_node = self.present_route[0][-1]
+
+                        if self.present_route[0][-1].node == 0:
                             solution_time = time
                         else: 
                             route_time = 0
                             for j in range(1, len(self.present_route[pointer])):
                                 # print(pointer, j)
                                 # print(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)
-                                route_time += self.network.links[(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)] 
-                                route_time = max(route_time, self.planning_route[pointer][j].start)
+                                route_time += self.network.links[(self.present_route[0][j-1].node,self.present_route[0][j].node)] 
+                                route_time = max(route_time, self.present_route[0][j].start)
                             solution_time = route_time
 
                         candidate_list = copy.deepcopy(handling_request)
@@ -464,6 +468,7 @@ class TD_DACO:
                             self.best_solution = solution
 
                             self.cotacdung += 1
+                            self.update_pheromone([solution])
             
             #tu coming route toi uu, sua planning route
             self.planning_route = copy.deepcopy(self.best_solution)
@@ -533,9 +538,10 @@ class TD_DACO:
             self.print_routeTD(self.planning_route)
             print(self.calculate_solution_distance(self.planning_route))
             print("PLANNING")
+
             print("HANDLING")
             print(len(handling_request))
-            self.print_routeTD([handling_request])
+            self.print_route([handling_request])
             print("HANDLING")
 
 
@@ -778,7 +784,7 @@ class TD_DACO:
         return carbon_emission
     
     def calculate_solution_distance(self, solution):
-        return self.calculate_carbon_emission(solution)
+        return self.calculate_carbon_emission(solution) + len(solution)*0
     
     
     def check_capacity(self, route: list, max_capacity):
@@ -821,6 +827,7 @@ class TD_DACO:
                     print(str(str(route[i][j].node) + '*'), end = ' ')
                     # raise Exception
             print()
+        print("Emmission: " , self.calculate_carbon_emission(route))
     def count_request(self, solution):
         count = 0
         for route in solution:
@@ -829,7 +836,7 @@ class TD_DACO:
             
 if __name__ == "__main__":
     np.random.seed(1)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c102.csv")
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = TD_DACO(problem1)
     print(haco.result)

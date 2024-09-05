@@ -15,12 +15,14 @@ from algorithms.insertion import Insertion
 import random
 import copy
 
-class TD_DACOV1:
+class TD_DACO:
     def __init__(self, problem):
         self.problem = problem
         self.network = problem.network
         self.split_requests(problem.requests)
         self.max_capacity = problem.truck.capacity
+
+        self.cotacdung = 0
 
         self.set_parameter()
         self.generate_pheromone()
@@ -30,11 +32,19 @@ class TD_DACOV1:
         print("DONE STATIC")
 
         self.dynamic_routing(40)
+
+
+
+        print("co tac dung", self.cotacdung)
+        
         
 
     def set_parameter(self):
-        self.num_ants = 50
-        self.max_iteration = 50
+        self.num_ants_static = 50
+        self.max_iteration_static = 50
+
+        self.num_ants_dynamic = 50
+        self.max_iteration_dynamic = 30
 
         self.alpha = 1
         self.beta = 2
@@ -54,7 +64,7 @@ class TD_DACOV1:
 
 
     def static_routing(self):
-        for i in range (self.max_iteration):
+        for i in range (self.max_iteration_static):
             solutions = list()
             candidate_list = list()
             for request in self.sta_requests:
@@ -64,7 +74,7 @@ class TD_DACOV1:
 
             # print("hello this is", self.depot.node)
 
-            for ant in range(self.num_ants):
+            for ant in range(self.num_ants_static):
                 solution = [[self.depot]] #start from depot
                 pointer = 0 #index of current
                 remain_capacity = self.max_capacity
@@ -195,26 +205,32 @@ class TD_DACOV1:
     def dynamic_routing(self, timestep):
         # timestep = 20
         time = self.depot.start
+
         # coming_request = self.dyn_requests #coming requests are requests havent received yet
         coming_request = []
         for request in self.dyn_requests:
             coming_request.append(request)
+
         handling_request = [] #handling requests are requests that are not assigned 
         for request in self.sta_requests:
             if request.node == 0: continue
             handling_request.append(request)
+
         all_request = []
         self.routes = sorted(self.best_solution, key = len)
         #self.planning_route = copy.deepcopy(self.routes) #to calculate total cost
+
         self.planning_route = []
         for route in self.routes:
             self.planning_route.append(route)
+
         self.present_route = [] #assigned requests
         self.coming_route = [] #planning unassigned requests
 
+        #cho xe di luon
         for i in range(len(self.planning_route)):
-            # self.present_route.append([self.depot,self.planning_route[i][1]])
-            self.present_route.insert(0,[self.depot,self.planning_route[i][1]])
+            self.present_route.append([self.depot,self.planning_route[i][1]])
+            # self.present_route.insert(0,[self.depot,self.planning_route[i][1]])
             for request in handling_request:
                 if request.node == self.planning_route[i][1].node:
                     handling_request.remove(request)
@@ -222,12 +238,27 @@ class TD_DACOV1:
         self.check_drone = [0 for i in range(len(self.present_route))] #create list to check if route have drone
 
         assigned = [0]
+
+        self.handling_heuristics = copy.deepcopy(handling_request)
+        
         while (time < self.depot.end):
+
+            temp_heuristics = []
 
             for route in self.present_route:
                 for request in route:
                     if request.node not in assigned:
                         assigned.append(request.node)
+
+            # for route in self.present_route:
+            #     if len(route) == 1:
+            #         self.present_route.remove(route)
+
+            print("FIRST PRESENT")
+            self.print_routeTD(self.present_route)
+            print(self.calculate_solution_distance(self.present_route))
+            print("FIRST PRESENT")
+            print("ASSIGNED: ", assigned)
 
             for i in self.dyn_requests:
                 if i.node == 0: continue 
@@ -242,123 +273,197 @@ class TD_DACOV1:
                     # print("HANDLING")
 
                     if i in coming_request:
-                        coming_request.remove(i) 
+                        coming_request.remove(i)
+
+                    if i not in self.handling_heuristics:
+                        self.handling_heuristics.append(i)
+                        temp_heuristics.append(i)
+
+            #self.planning heuristic de tan dung tri thuc tu truoc
+
+            # """
+
+            # self.handling_heuristics 
+
+            handling = copy.deepcopy(temp_heuristics)
+            heuristic_route = copy.deepcopy(self.planning_route)
+            while handling:
+                request = handling.pop(0)
+                best_route = None
+                best_position = None
+                best_increase = float('inf')
+                for route in heuristic_route:
+                    for i in range(1, len(route)):
+                        if route[i].node in assigned:
+                            continue
+                        else:
+                            new_route = route[:i] + [request] + route[i:]
+                            if self.check_capacity([new_route], self.max_capacity) and self.check_time([new_route]):
+                                increase = (self.network.links[(route[i - 1].node, request.node)]  +
+                                            self.network.links[(request.node, route[i].node)]  -
+                                            self.network.links[(route[i - 1].node, route[i].node)] )
+                                if increase < best_increase:
+                                    best_route = route
+                                    best_position = i
+                                    best_increase = increase
+                if best_route is not None:
+                    best_route.insert(best_position, request)
+                else:
+                    heuristic_route.insert(0, [self.depot, request, self.depot])
+
+            
+            print("HEURISTIC")
+            self.print_routeTD(heuristic_route)
+            print("HEURISTIC")
+
+            for route in heuristic_route:
+
+                if route[-1].node == 0:
+                    route.pop()
+                if len(route) == 0:
+                    heuristic_route.remove(route)
+
+            print("HEURISTIC")
+            self.print_routeTD(heuristic_route)
+            print("HEURISTIC")
+
+        
+            self.drone_routing(heuristic_route)
+            self.best_solution = heuristic_route
+            self.best_distance = self.calculate_solution_distance(heuristic_route)
+            if self.best_distance == float('inf'): raise Exception
+
+            print("PLANNING")
+            self.print_routeTD(self.planning_route)
+            print(self.calculate_solution_distance(self.planning_route))
+            print("PLANNING")
+
+            # """
+
+
             
             # xu li dinh tuyen lai bang ACO, xu li tren coming_route
-            for ants in range(self.num_ants):
-                solution = copy.deepcopy(self.present_route)
-                pointer = 0
-                remain_capacity = sum(i.demand for i in solution[pointer])
-                visited = set()
-                current_node = self.present_route[pointer][-1]
-                if self.present_route[pointer][-1].node == 0:
-                    solution_time = time
-                else: 
-                    route_time = 0
-                    for j in range(1, len(self.present_route[pointer])):
-                        route_time += self.network.links[(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)] 
-                        route_time = max(route_time, self.planning_route[pointer][j].start)
-                    solution_time = route_time
-
-                candidate_list = copy.deepcopy(handling_request)
-                solutions = []
-
-            
-
-                ite=1
-                feasible = True
-                count = 0
-                while len(visited) < len(handling_request):
-                    ite+=1
-                    probability = self.dyn_generate_probability(current_node, candidate_list, visited, remain_capacity, solution_time,time)
-                    
-                    if len(probability) == 0:  # Check capacity constraint for vehicle
-                        #solution[pointer].append(self.depot)
-                        pointer += 1
-                        #solution[pointer].append([self.depot])
-                        if pointer >= len(solution):
-                            solution.append([self.depot])
+            # if time % 80 == 0: 
+            if True:
+                # for m in range(self.max_iteration_dynamic): 
+                    for ants in range(self.num_ants_dynamic):
+                        solution = copy.deepcopy(self.present_route)
+                        pointer = 0
+                        remain_capacity = sum(i.demand for i in solution[pointer])
+                        visited = set()
+                        current_node = self.present_route[pointer][-1]
+                        if self.present_route[pointer][-1].node == 0:
                             solution_time = time
-
-                            if feasible == False and count > 20:
-                                # solution = None
-                                solution = solution[:-22]
-                                break
-                            feasible = False
-                            count += 1
-                        else:
+                        else: 
                             route_time = 0
-                            for j in range(1, len(solution[pointer])):
-                                route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] 
-                                route_time = max(route_time, solution[pointer][j].start)
+                            for j in range(1, len(self.present_route[pointer])):
+                                # print(pointer, j)
+                                # print(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)
+                                route_time += self.network.links[(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)] 
+                                route_time = max(route_time, self.planning_route[pointer][j].start)
                             solution_time = route_time
+
+                        candidate_list = copy.deepcopy(handling_request)
+                        solutions = []
+
+                    
+
+                        ite=1
+                        feasible = True
+                        count = 0
+                        while len(visited) < len(handling_request):
+                            ite+=1
+                            probability = self.dyn_generate_probability(current_node, candidate_list, visited, remain_capacity, solution_time,time)
+                            
+                            if len(probability) == 0:  # Check capacity constraint for vehicle
+                                #solution[pointer].append(self.depot)
+                                pointer += 1
+                                #solution[pointer].append([self.depot])
+                                if pointer >= len(solution):
+                                    solution.append([self.depot])
+                                    solution_time = time
+
+                                    if feasible == False and count > 20:
+                                        # solution = None
+                                        solution = solution[:-22]
+                                        break
+                                    feasible = False
+                                    count += 1
+                                else:
+                                    route_time = 0
+                                    for j in range(1, len(solution[pointer])):
+                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] 
+                                        route_time = max(route_time, solution[pointer][j].start)
+                                    solution_time = route_time
+
+                                    count = 0
+                                    feasible = True
+
+                                current_node = solution[pointer][-1]
+                                remain_capacity = self.max_capacity - sum(i.demand for i in solution[pointer])
+                                # print('run here')
+
+                                # if feasible == False:
+                                #     solution = None
+                                #     break
+                                # feasible = False
+                                continue
 
                             count = 0
                             feasible = True
-
-                        current_node = solution[pointer][-1]
-                        remain_capacity = self.max_capacity - sum(i.demand for i in solution[pointer])
-                        # print('run here')
-
-                        # if feasible == False:
-                        #     solution = None
-                        #     break
-                        # feasible = False
-                        continue
-
-                    count = 0
-                    feasible = True
-                    next_node = self.choose_next_node(probability)
-    
-                    solution[pointer].append(next_node)
-                    visited.add(next_node.node)
-                    remain_capacity -= next_node.demand
-
-                    solution_time += self.network.links[(current_node.node, next_node.node)] 
-                    solution_time = max(solution_time, next_node.start) #neu den som thi doi
-
-                    if remain_capacity < 0:  # Check capacity constraint for vehicle
-                        solution[pointer].pop()
-                        visited.remove(next_node.node)
-                        # solution[pointer].append(self.depot)
-                        pointer += 1
-                        # solution.append([self.depot])
-                        if pointer >= len(solution):
-                            solution.append([self.depot])
-                            solution_time = time
-                        else:
-                            route_time = 0
-                            for j in range(1, len(solution[pointer])):
-                                route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] 
-                                route_time = max(route_time, solution[pointer][j].start)
-                            solution_time = route_time
-
-
-                        current_node = solution[pointer][-1]
-                        remain_capacity = self.max_capacity - sum(i.demand for i in solution[pointer])
-        
-                        continue
-
-                    current_node = next_node
-
-                rand = random.random()
-                if rand < 0.5:
-                    self.drone_routing(solution)
-
-                solutions.append(solution)
-
-
-            self.update_pheromone(solutions)
-
-            self.best_distance = float('inf')
-            self.best_solution = None
+                            next_node = self.choose_next_node(probability)
             
-            for solution in solutions:
-                distance = self.calculate_solution_distance(solution)
-                # print(distance)
-                if distance < self.best_distance:
-                    self.best_distance = distance
-                    self.best_solution = solution
+                            solution[pointer].append(next_node)
+                            visited.add(next_node.node)
+                            remain_capacity -= next_node.demand
+
+                            solution_time += self.network.links[(current_node.node, next_node.node)] 
+                            solution_time = max(solution_time, next_node.start) #neu den som thi doi
+
+                            if remain_capacity < 0:  # Check capacity constraint for vehicle
+                                solution[pointer].pop()
+                                visited.remove(next_node.node)
+                                # solution[pointer].append(self.depot)
+                                pointer += 1
+                                # solution.append([self.depot])
+                                if pointer >= len(solution):
+                                    solution.append([self.depot])
+                                    solution_time = time
+                                else:
+                                    route_time = 0
+                                    for j in range(1, len(solution[pointer])):
+                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] 
+                                        route_time = max(route_time, solution[pointer][j].start)
+                                    solution_time = route_time
+
+
+                                current_node = solution[pointer][-1]
+                                remain_capacity = self.max_capacity - sum(i.demand for i in solution[pointer])
+                
+                                continue
+
+                            current_node = next_node
+
+                        rand = random.random()
+                        if rand < 0.5:
+                            self.drone_routing(solution)
+
+                        solutions.append(solution)
+
+
+                    self.update_pheromone(solutions)
+
+                    # self.best_distance = float('inf')
+                    # self.best_solution = None
+                    
+                    for solution in solutions:
+                        distance = self.calculate_solution_distance(solution)
+                        # print(distance)
+                        if distance < self.best_distance:
+                            self.best_distance = distance
+                            self.best_solution = solution
+
+                            self.cotacdung += 1
             
             #tu coming route toi uu, sua planning route
             self.planning_route = copy.deepcopy(self.best_solution)
@@ -367,6 +472,7 @@ class TD_DACOV1:
             print("SOLUTION")
 
             #check condition to update present_route
+            '''
             for i in range(len(self.planning_route)):
                 if i >= len(self.present_route): #them duong moi theo planning route
                     self.present_route.append([self.depot,self.planning_route[i][1]])
@@ -393,6 +499,29 @@ class TD_DACOV1:
                             for request in handling_request:
                                 if request.node == self.planning_route[i][j].node:
                                     handling_request.remove(request)
+
+            '''
+
+            self.present_route = []
+            for i in range(len(self.planning_route)):
+                self.present_route.append([self.depot])
+                check_time1 = 0
+                for j in range(1, len(self.planning_route[i])):
+                    check_time1 += self.network.links[(self.planning_route[i][j-1].node,self.planning_route[i][j].node)] 
+                    check_time1 = max(route_time, self.planning_route[i][j].start)
+                    if (check_time1 < time+timestep) or (self.planning_route[i][j].node in assigned) :
+                        self.present_route[i].append(self.planning_route[i][j])
+                        for request in handling_request:
+                            if request.node == self.planning_route[i][j].node:
+                                handling_request.remove(request)
+
+                        if self.planning_route[i][j].node not in assigned:
+                            assigned.append(self.planning_route[i][j].node)
+                    
+
+
+
+
 
 
             print("TIMESTEP: ", time)
@@ -424,6 +553,8 @@ class TD_DACOV1:
         print(self.calculate_solution_distance(self.present_route))
         print("FINAL")
 
+        self.result = (self.calculate_solution_distance(self.present_route), (100 - self.count_request(self.present_route)))
+
     def dyn_generate_probability(self, current_node, candidate_list, visited, remain_capacity, solution_time, timetime):
         probability = list()
         total = 0
@@ -431,6 +562,12 @@ class TD_DACOV1:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
+                pheromone = self.pheromone[(current_node.node,request.node)]
+                distance = self.network.links[(current_node.node,request.node)]
+                waiting = max(request.end - (self.network.links[(current_node.node,request.node)]  + solution_time) , 0)
+                td_diff = 1
+
+                '''
                 if solution_time + self.network.links[(current_node.node, request.node)]  < request.end:
                     if solution_time + self.network.links[(current_node.node, request.node)]  >= request.start:
                         total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] )**self.beta  #cong thuc toan hoc cua haco
@@ -439,9 +576,12 @@ class TD_DACOV1:
                         total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)]  
                                                                                                  + request.end - (self.network.links[(current_node.node,request.node)]  + solution_time))**self.beta  #doi request bat dau
                         probability.append((request,total))
-                # else: print("bbbbbbb", request.node, solution_time + self.network.links[(current_node.node, request.node)] , request.start, request.end, timetime)
-                    # print(total)
-            # else: print("aaaaaaaaaa")
+                '''
+
+                if solution_time + self.network.links[(current_node.node, request.node)]  < request.end:
+                    total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/waiting) * (1/td_diff)
+                    probability.append((request, total))
+
 
         probability = [(node, prob / total) for node, prob in probability]
         return probability
@@ -451,14 +591,15 @@ class TD_DACOV1:
 
         all_list = []
         for i in range(len(self.planning_route)):
-            if self.check_drone[i] == 1: 
-                all_list.append(None)
-                continue
+            # if self.check_drone[i] == 1:
+            #     all_list.append(None)
+            #     continue
             list = self.planning_route[i][len(self.present_route[i]) - 1 :]  #CAREFUL CONSIDER here present = [1,2,3], planning = [1,2,3,4,5,6,7], list = [3,4,5,6,7]
             all_list.append(list)
 
         for i in range(len(all_list)):
-            if self.check_drone[i] == 0:
+            # if self.check_drone[i] == 0:
+            if True:
                 route = all_list[i]
                 temp = self.drone_choose_node(route)
                 if temp == False:
@@ -599,14 +740,19 @@ class TD_DACOV1:
 
     
     def calculate_carbon_emission(self, solution): #version 1, only 1 drone for the route
-        if not self.check_capacity(solution, self.max_capacity): return float('inf')
-        if not self.check_time(solution): return float('inf')
+        if not (self.check_capacity(solution, self.max_capacity)): 
+            raise Exception
+            return float('inf')
+        if not (self.check_time(solution)): 
+            raise Exception
+            return float('inf')
         # carbon_emission = 0
         truck_length= 0
         drone_length = 0
         truck_route = []
         drone_route = []
         for route in solution:
+            # if len(route) == 1: continue
             current_request = route[0]
             for i in range(1,len(route)-1):
                 # request = solution[i]
@@ -678,11 +824,12 @@ class TD_DACOV1:
     def count_request(self, solution):
         count = 0
         for route in solution:
-            count += len(route) -1
+            count += len(route) - 2
         return count
             
 if __name__ == "__main__":
     np.random.seed(11)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c107.csv")
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100rc102.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
-    haco = TD_DACOV1(problem1)
+    haco = TD_DACO(problem1)
+    print(haco.result)
