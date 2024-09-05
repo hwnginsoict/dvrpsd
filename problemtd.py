@@ -10,7 +10,7 @@ class ProblemTD:
     def __init__(self, instance):
         customers = {}
         request = []
-        self.num_vehicle = 25
+        # self.num_vehicle = 25
 
         df = pd.read_csv(instance)
         customer_data = df.iloc[0:]
@@ -27,7 +27,7 @@ class ProblemTD:
         self.requests = sorted(request, key=lambda x: x.time)
         self.network = Network(customers)
 
-        self.truck = Truck(velocity=1, capacity=1000, w=10, costf=0.13) 
+        self.truck = Truck(velocity=1, capacity=1300, w=10, costf=0.13) 
         self.drone = Drone(velocity=1.6, capacity=15, w=5, costf=0.1, endure=135, launch=5, recover=5)
 
     def generate_sample(self, instance):
