@@ -8,7 +8,8 @@ import pandas as pd
 
 class ProblemTD:
     def __init__(self, instance):
-        customers = {}
+        self.customers = {}
+        self.take_request = {}
         request = []
         # self.num_vehicle = 25
 
@@ -22,13 +23,14 @@ class ProblemTD:
             request.append(req)
 
             cus = Node(id=int(num), x=x, y=y)
-            customers[int(num)] = cus
+            self.customers[int(num)] = cus
+            self.take_request[int(num)] = req
 
         self.requests = sorted(request, key=lambda x: x.time)
-        self.network = Network(customers)
+        self.network = Network(self.customers)
 
-        self.truck = Truck(velocity=1, capacity=1300, w=10, costf=0.13) 
-        self.drone = Drone(velocity=1.6, capacity=15, w=5, costf=0.1, endure=135, launch=5, recover=5)
+        self.truck = Truck(velocity=5/6, capacity=1300, w=10, costf=0.13) 
+        self.drone = Drone(velocity=8/6, capacity=15, w=5, costf=0.1, endure=135, launch=5, recover=5)
 
     def generate_sample(self, instance):
         customers = {}

@@ -15,7 +15,7 @@ from algorithms.insertion import Insertion
 import random
 import copy
 
-class TD_DACO:
+class TD_DACOF:
     def __init__(self, problem):
         self.problem = problem
         self.network = problem.network
@@ -51,6 +51,8 @@ class TD_DACO:
         self.rho = 0.6
         self.q = 100
 
+        self.num_trucks = 10
+
         self.best_distance = float('inf')
         self.best_solution = None
 
@@ -84,6 +86,10 @@ class TD_DACO:
                 current_node = self.depot
 
                 while len(visited) < len(self.sta_requests) -1: # + len(self.dyn_requests):  # Visit all customers
+
+                    if (len(solution) >= self.num_trucks):
+                        break
+
                     probability = self.generate_probability(current_node, candidate_list, visited, remain_capacity, solution_time)
 
                     if len(probability) == 0:  # Check capacity constraint for vehicle
@@ -104,7 +110,7 @@ class TD_DACO:
                     visited.add(next_node.node)
                     remain_capacity -= next_node.demand
 
-                    solution_time += self.network.links[(current_node.node, next_node.node)]/self.problem.truck.velocity
+                    solution_time += self.network.links[(current_node.node, next_node.node)] 
                     solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                     if remain_capacity < 0:  # Check capacity constraint for vehicle
@@ -280,10 +286,12 @@ class TD_DACO:
                         temp_heuristics.append(i)
 
             #self.planning heuristic de tan dung tri thuc tu truoc
+
             # """
+
             # self.handling_heuristics 
 
-            handling = copy.deepcopy(temp_heuristics)
+            handling = copy.deepcopy(temp_heuristics) #@them shuffle o day
             heuristic_route = copy.deepcopy(self.planning_route)
             while handling:
                 request = handling.pop(0)
@@ -296,7 +304,7 @@ class TD_DACO:
                             continue
                         else:
                             new_route = route[:i] + [request] + route[i:]
-                            if self.check_capacity([new_route], self.max_capacity) and self.check_timeTD([new_route]):
+                            if self.check_capacity([new_route], self.max_capacity) and self.check_time([new_route]):
                                 increase = (self.network.links[(route[i - 1].node, request.node)]  +
                                             self.network.links[(request.node, route[i].node)]  -
                                             self.network.links[(route[i - 1].node, route[i].node)] )
@@ -307,10 +315,10 @@ class TD_DACO:
                 if best_route is not None:
                     best_route.insert(best_position, request)
                 else:
+                    if len(heuristic_route) >= self.num_trucks:
+                        break
                     heuristic_route.insert(0, [self.depot, request, self.depot])
 
-            if not self.check_timeTD(heuristic_route): 
-                raise Exception
             
             print("HEURISTIC")
             self.print_routeTD(heuristic_route)
@@ -340,6 +348,7 @@ class TD_DACO:
 
             # """
 
+
             
             # xu li dinh tuyen lai bang ACO, xu li tren coming_route
             if time % 80 == 0: 
@@ -349,8 +358,6 @@ class TD_DACO:
 
                 for m in range(self.max_iteration_dynamic): 
                     for ants in range(self.num_ants_dynamic):
-                        random.shuffle(self.present_route)
-
                         solution = copy.deepcopy(self.present_route)
                         pointer = 0
                         remain_capacity = sum(i.demand for i in solution[0])
@@ -377,6 +384,40 @@ class TD_DACO:
                         feasible = True
                         count = 0
                         while len(visited) < len(handling_request):
+
+                            if (len(solution) >= self.num_trucks): #them 1 ham de them request thua vao nua thi ngon
+                                # break
+                                remain_requests = []
+                                for request in handling_request:
+                                    if request.node not in visited:
+                                        remain_requests.append(self.problem.take_request[request.node])
+                                
+                                while remain_requests:
+                                    req = remain_requests.pop(0)
+                                    best_route = None
+                                    best_position = None
+                                    best_increase = float('inf')
+                                    for route in solution:
+                                        for i in range(1, len(route)):
+                                            if route[i].node in assigned:
+                                                continue
+                                            else:
+                                                new_route = route[:i] + [req] + route[i:]
+                                                if self.check_capacity([new_route], self.max_capacity) and self.check_time([new_route]):
+                                                    increase = (self.network.links[(route[i - 1].node, req.node)]  +
+                                                                self.network.links[(req.node, route[i].node)]  -
+                                                                self.network.links[(route[i - 1].node, route[i].node)] )
+                                                    if increase < best_increase:
+                                                        best_route = route
+                                                        best_position = i
+                                                        best_increase = increase
+                                    if best_route is not None:
+                                        best_route.insert(best_position, request)
+                                    
+                                    self.print_routeTD(solution)
+
+                                break
+                            
                             ite+=1
                             probability = self.dyn_generate_probability(current_node, candidate_list, visited, remain_capacity, solution_time,time)
                             
@@ -572,8 +613,8 @@ class TD_DACO:
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
                 pheromone = self.pheromone[(current_node.node,request.node)]
-                distance = self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity
-                waiting = max(request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity  + solution_time) , 0)
+                distance = self.network.links[(current_node.node,request.node)]
+                waiting = max(request.end - (self.network.links[(current_node.node,request.node)]  + solution_time) , 0)
                 td_diff = 1
 
                 '''
@@ -587,7 +628,7 @@ class TD_DACO:
                         probability.append((request,total))
                 '''
 
-                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  < request.end:
+                if solution_time + self.network.links[(current_node.node, request.node)]  < request.end:
                     total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/waiting) * (1/td_diff)
                     probability.append((request, total))
 
@@ -725,13 +766,13 @@ class TD_DACO:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
-                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  < request.end:
-                    if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  >= request.start:
+                if solution_time + self.network.links[(current_node.node, request.node)]  < request.end:
+                    if solution_time + self.network.links[(current_node.node, request.node)]  >= request.start:
                         total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] )**self.beta  #cong thuc toan hoc cua haco
                         probability.append((request,total))
                     else:
                         total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)]  
-                                                                                                 + request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity  + solution_time))**self.beta  #doi request bat dau
+                                                                                                 + request.end - (self.network.links[(current_node.node,request.node)]  + solution_time))**self.beta  #doi request bat dau
                         probability.append((request,total))
 
         probability = [(node, prob / total) for node, prob in probability]
@@ -777,7 +818,7 @@ class TD_DACO:
         if not (self.check_capacity(solution, self.max_capacity)): 
             raise Exception
             return float('inf')
-        if not (self.check_timeTD(solution)): 
+        if not (self.check_time(solution)): 
             raise Exception
             return float('inf')
         # carbon_emission = 0
@@ -832,36 +873,12 @@ class TD_DACO:
         for i in range(len(route)):
             time = 0
             for j in range(len(route[i])-1):
-                time = time + 0 + self.network.links[(route[i][j].node, route[i][j+1].node)]/self.problem.truck.velocity
+                time = time + 0 + self.network.links[(route[i][j].node, route[i][j+1].node)] 
                 if time < route[i][j+1].start:
                     time = route[i][j+1].start
                 if time > route[i][j+1].end:
                     return False
         return True
-    
-    def check_timeTD(self, route: list):
-        time = 0
-        for i in range(len(route)):
-            time = 0
-            for j in range(1, len(route[i])):
-                if route[i][j].service_type == 'drone':
-                    continue
-                else:
-                    if route[i][j-1].service_type == 'truck':
-                        time = time + 0 + self.network.links[(route[i][j-1].node, route[i][j].node)] / self.problem.truck.velocity
-                        if time < route[i][j].start:
-                            time = route[i][j].start
-                        if time > route[i][j].end:
-                            return False
-                    else:
-                        time_truck = time + 0 + self.network.links[(route[i][j-2].node, route[i][j].node)] / self.problem.truck.velocity
-                        if time_truck > route[i][j].end:
-                            return False
-                        time_drone = time + 0 + (self.network.links[(route[i][j-2].node, route[i][j-1].node)] + self.network.links[(route[i][j-1].node, route[i][j].node)])/self.problem.drone.velocity
-                        time = max(time_truck, time_drone)
-
-        return True
-
     
     def print_route(self, route):
         #lam 1 function rieng
@@ -888,7 +905,8 @@ class TD_DACO:
             
 if __name__ == "__main__":
     np.random.seed(1)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100r101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
-    haco = TD_DACO(problem1)
+    haco = TD_DACOF(problem1)
     print(haco.result)
+
