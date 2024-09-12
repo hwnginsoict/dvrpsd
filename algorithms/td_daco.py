@@ -364,13 +364,12 @@ class TD_DACO:
                             for j in range(1, len(self.present_route[pointer])):
                                 # print(pointer, j)
                                 # print(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)
-                                route_time += self.network.links[(self.present_route[0][j-1].node,self.present_route[0][j].node)] 
+                                route_time += self.network.links[(self.present_route[0][j-1].node,self.present_route[0][j].node)]/self.problem.truck.velocity #@lam o day, tach truck va drone ra
                                 route_time = max(route_time, self.present_route[0][j].start)
                             solution_time = route_time
 
                         candidate_list = copy.deepcopy(handling_request)
                         solutions = []
-
                     
 
                         ite=1
@@ -422,7 +421,7 @@ class TD_DACO:
                             visited.add(next_node.node)
                             remain_capacity -= next_node.demand
 
-                            solution_time += self.network.links[(current_node.node, next_node.node)] 
+                            solution_time += self.network.links[(current_node.node, next_node.node)] /self.problem.truck.velocity
                             solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                             if remain_capacity < 0:  # Check capacity constraint for vehicle
@@ -437,7 +436,7 @@ class TD_DACO:
                                 else:
                                     route_time = 0
                                     for j in range(1, len(solution[pointer])):
-                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] 
+                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] / self.problem.truck.velocity
                                         route_time = max(route_time, solution[pointer][j].start)
                                     solution_time = route_time
 
@@ -778,7 +777,9 @@ class TD_DACO:
             raise Exception
             return float('inf')
         if not (self.check_timeTD(solution)): 
-            raise Exception
+            # print("BUG")
+            # self.print_routeTD(solution)
+            # raise Exception
             return float('inf')
         # carbon_emission = 0
         truck_length= 0
@@ -887,7 +888,7 @@ class TD_DACO:
         return count
             
 if __name__ == "__main__":
-    np.random.seed(1)
+    np.random.seed(11)
     problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = TD_DACO(problem1)
