@@ -40,11 +40,11 @@ class TD_DACO:
         
 
     def set_parameter(self):
-        self.num_ants_static = 100
-        self.max_iteration_static = 100
+        self.num_ants_static = 10
+        self.max_iteration_static = 10
 
-        self.num_ants_dynamic = 100
-        self.max_iteration_dynamic = 50
+        self.num_ants_dynamic = 50
+        self.max_iteration_dynamic = 10
 
         self.alpha = 1
         self.beta = 2
@@ -774,12 +774,14 @@ class TD_DACO:
     
     def calculate_carbon_emission(self, solution): #version 1, only 1 drone for the route
         if not (self.check_capacity(solution, self.max_capacity)): 
+            # print("BUG")
+            # self.print_routeTD(solution)
             raise Exception
             return float('inf')
         if not (self.check_timeTD(solution)): 
             # print("BUG")
             # self.print_routeTD(solution)
-            # raise Exception
+            raise Exception
             return float('inf')
         # carbon_emission = 0
         truck_length= 0
@@ -889,7 +891,7 @@ class TD_DACO:
             
 if __name__ == "__main__":
     np.random.seed(1)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100r203.csv")
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c104.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = TD_DACO(problem1)
     print(haco.result)
