@@ -14,7 +14,7 @@ import numpy as np
 #              'h100rc101.csv', 'h100rc102.csv', 'h100rc103.csv', 'h100rc104.csv', 'h100rc105.csv', 'h100rc106.csv', 'h100rc107.csv', 'h100rc108.csv', 
 #              'h100rc201.csv', 'h100rc202.csv', 'h100rc203.csv', 'h100rc204.csv', 'h100rc205.csv', 'h100rc206.csv', 'h100rc207.csv', 'h100rc208.csv']
 
-file_list = ['h100c104.csv', 'h100c105.csv', 'h100c106.csv', 'h100c107.csv', 'h100c108.csv', 
+file_list = ['h100c105.csv', 'h100c106.csv', 'h100c107.csv', 'h100c108.csv', 
              'h100c109.csv', 'h100c201.csv', 'h100c202.csv', 'h100c203.csv', 'h100c204.csv', 'h100c205.csv', 'h100c206.csv', 'h100c207.csv', 
              'h100c208.csv', 'h100r101.csv', 'h100r102.csv', 'h100r103.csv', 'h100r104.csv', 'h100r105.csv', 'h100r106.csv', 'h100r107.csv', 
              'h100r108.csv', 'h100r109.csv', 'h100r110.csv', 'h100r111.csv', 'h100r112.csv', 'h100r201.csv', 'h100r202.csv', 'h100r203.csv', 
