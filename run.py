@@ -1,4 +1,4 @@
-from algorithms.td_daco import TD_DACO
+from algorithms.infer import INFER
 from problemtd import ProblemTD
 
 import csv
@@ -22,6 +22,8 @@ file_list = ['h100c105.csv', 'h100c106.csv', 'h100c107.csv', 'h100c108.csv',
              'h100rc101.csv', 'h100rc102.csv', 'h100rc103.csv', 'h100rc104.csv', 'h100rc105.csv', 'h100rc106.csv', 'h100rc107.csv', 'h100rc108.csv', 
              'h100rc201.csv', 'h100rc202.csv', 'h100rc203.csv', 'h100rc204.csv', 'h100rc205.csv', 'h100rc206.csv', 'h100rc207.csv', 'h100rc208.csv']
 
+# file_list = ['h100c104.csv']
+
 # Ensure the file is created and write the header
 file_path = 'new_final_csv.csv'
 if not os.path.exists(file_path):
@@ -36,7 +38,7 @@ for file_name in file_list:
         np.random.seed(seed)  # Set the seed
 
         problem1 = ProblemTD("/content/dvrpsd/data/dvrptw/100/" + file_name)
-        haco = TD_DACO(problem1)
+        haco = INFER(problem1)
         result = haco.result  # Get the result
 
         # Append the seed to the result and write it to the file immediately
