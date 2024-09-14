@@ -10,9 +10,9 @@ import numpy as np
 input_dir = '/kaggle/input/dvrptw/dvrptw/100/'  # Change this to the correct dataset path in Kaggle
 
 # List of files to process
-file_list = ['h100r201.csv', 'h100r202.csv', 'h100r203.csv', 'h100r204.csv', 'h100r205.csv', 'h100r206.csv']
+# file_list = ['h100r201.csv', 'h100r202.csv', 'h100r203.csv', 'h100r204.csv', 'h100r205.csv', 'h100r206.csv']
              
-            #  ['h100r207.csv', 'h100r208.csv', 'h100r209.csv', 'h100r210.csv', 'h100r211.csv']
+file_list =  ['h100r207.csv', 'h100r208.csv', 'h100r209.csv', 'h100r210.csv', 'h100r211.csv']
 
 # Output file path
 output_file_path = '/kaggle/working/new_final_csv.csv'
