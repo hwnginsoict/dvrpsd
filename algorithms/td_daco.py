@@ -40,11 +40,11 @@ class TD_DACO:
         
 
     def set_parameter(self):
-        self.num_ants_static = 100  #100
-        self.max_iteration_static = 100   #100
+        self.num_ants_static = 10  #100
+        self.max_iteration_static = 10   #100
 
-        self.num_ants_dynamic = 100 #100
-        self.max_iteration_dynamic = 50 #50
+        self.num_ants_dynamic = 50 #100
+        self.max_iteration_dynamic = 10 #50
 
         self.alpha = 1
         self.beta = 2
@@ -890,8 +890,8 @@ class TD_DACO:
         return count
             
 if __name__ == "__main__":
-    np.random.seed(4)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c104.csv")
+    np.random.seed(3)
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100r101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = TD_DACO(problem1)
     print(haco.result)

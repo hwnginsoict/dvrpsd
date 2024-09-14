@@ -12,7 +12,7 @@ input_dir = '/kaggle/input/dvrptw/dvrptw/100/'  # Change this to the correct dat
 # List of files to process
 # file_list = ['h100r201.csv', 'h100r202.csv', 'h100r203.csv', 'h100r204.csv', 'h100r205.csv', 'h100r206.csv']
              
-file_list =  ['h100r207.csv', 'h100r208.csv', 'h100r209.csv', 'h100r210.csv', 'h100r211.csv']
+file_list =  ['h100rc101.csv', 'h100rc102.csv', 'h100rc103.csv', 'h100rc104.csv', 'h100rc105.csv', 'h100rc106.csv', 'h100rc107.csv', 'h100rc108.csv', ]
 
 # Output file path
 output_file_path = '/kaggle/working/new_final_csv.csv'
@@ -39,5 +39,6 @@ for file_name in file_list:
         with open(output_file_path, mode='a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([file_name, seed, result[0], result[1]])  # Include seed in the result
+            print([file_name, seed, result[0], result[1]])
 
 print("Results have been written to", output_file_path)

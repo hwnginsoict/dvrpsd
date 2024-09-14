@@ -779,7 +779,7 @@ class INFER:
         if not (self.check_timeTD(solution)): 
             # print("BUG")
             # self.print_routeTD(solution)
-            # raise Exception
+            raise Exception
             return float('inf')
         # carbon_emission = 0
         truck_length= 0
@@ -888,7 +888,7 @@ class INFER:
         return count
             
 if __name__ == "__main__":
-    np.random.seed(1)
+    np.random.seed(10)
     problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100r101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = INFER(problem1)
