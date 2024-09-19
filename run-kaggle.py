@@ -14,6 +14,8 @@ input_dir = '/kaggle/input/dvrptw/dvrptw/100/'  # Change this to the correct dat
              
 file_list =  ['h100rc101.csv', 'h100rc102.csv', 'h100rc103.csv', 'h100rc104.csv', 'h100rc105.csv', 'h100rc106.csv', 'h100rc107.csv', 'h100rc108.csv', 'h100rc201.csv', 'h100rc202.csv', 'h100rc203.csv', 'h100rc204.csv', 'h100rc205.csv', 'h100rc206.csv', 'h100rc207.csv', 'h100rc208.csv']
 
+file_list = ['h100r111.csv']
+
 # Output file path
 output_file_path = '/kaggle/working/new_final_csv.csv'
 
@@ -25,7 +27,7 @@ if not os.path.exists(output_file_path):
 
 # Loop over the seed values and file names
 for file_name in file_list:
-    for seed in range(6, 11):
+    for seed in [9,10]:
         np.random.seed(seed)  # Set the seed
 
         # Load the problem using the correct path for Kaggle
