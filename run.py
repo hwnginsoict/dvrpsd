@@ -16,10 +16,10 @@ import numpy as np
 # file_list = ['h100r101.csv', 'h100r102.csv', 'h100r103.csv', 'h100r104.csv', 'h100r105.csv', 'h100r106.csv', 'h100r107.csv', 
 #              'h100r108.csv', 'h100r109.csv', 'h100r110.csv', 'h100r111.csv', 'h100r112.csv']
 
-file_list = ['h100c109.csv']
+file_list = ['h100c104.csv']
 
 # Ensure the file is created and write the header
-file_path = 'new_final_csv.csv'
+file_path = 'new_final_csv_local.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -28,7 +28,7 @@ if not os.path.exists(file_path):
 # Loop over the seed values
 for file_name in file_list:
 
-    for seed in range(1, 11):
+    for seed in range(1, 3):
         np.random.seed(seed)  # Set the seed
 
         problem1 = ProblemTD("F:/CodingEnvironment/dvrpsd/data/dvrptw/100/" + file_name)
