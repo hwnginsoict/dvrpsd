@@ -15,7 +15,7 @@ from algorithms.insertion import Insertion
 import random
 import copy
 
-class TD_DACO:
+class INFERV1:
     def __init__(self, problem):
         self.problem = problem
         self.network = problem.network
@@ -199,8 +199,8 @@ class TD_DACO:
                     self.best_distance = distance
                     self.best_solution = solution
             
-            print("Best: ", self.best_distance)
-            self.print_routeTD(self.best_solution)
+            # print("Best: ", self.best_distance)
+            # self.print_routeTD(self.best_solution)
     
     def dynamic_routing(self, timestep):
         # timestep = 20
@@ -254,11 +254,11 @@ class TD_DACO:
                 if len(route) == 1:
                     self.present_route.remove(route)
 
-            print("FIRST PRESENT")
-            self.print_routeTD(self.present_route)
-            print(self.calculate_solution_distance(self.present_route))
-            print("FIRST PRESENT")
-            print("ASSIGNED: ", assigned)
+            # print("FIRST PRESENT")
+            # self.print_routeTD(self.present_route)
+            # print(self.calculate_solution_distance(self.present_route))
+            # print("FIRST PRESENT")
+            # print("ASSIGNED: ", assigned)
 
             for i in self.dyn_requests:
                 if i.node == 0: continue 
@@ -312,9 +312,9 @@ class TD_DACO:
             if not self.check_timeTD(heuristic_route): 
                 raise Exception
             
-            print("HEURISTIC")
-            self.print_routeTD(heuristic_route)
-            print("HEURISTIC")
+            # print("HEURISTIC")
+            # self.print_routeTD(heuristic_route)
+            # print("HEURISTIC")
 
             for route in heuristic_route:
 
@@ -323,9 +323,9 @@ class TD_DACO:
                 if len(route) == 0:
                     heuristic_route.remove(route)
 
-            print("HEURISTIC")
-            self.print_routeTD(heuristic_route)
-            print("HEURISTIC")
+            # print("HEURISTIC")
+            # self.print_routeTD(heuristic_route)
+            # print("HEURISTIC")
 
         
             self.drone_routing(heuristic_route)
@@ -333,10 +333,10 @@ class TD_DACO:
             self.best_distance = self.calculate_solution_distance(heuristic_route)
             if self.best_distance == float('inf'): raise Exception
 
-            print("PLANNING")
-            self.print_routeTD(self.planning_route)
-            print(self.calculate_solution_distance(self.planning_route))
-            print("PLANNING")
+            # print("PLANNING")
+            # self.print_routeTD(self.planning_route)
+            # print(self.calculate_solution_distance(self.planning_route))
+            # print("PLANNING")
 
             # """
 
@@ -487,9 +487,9 @@ class TD_DACO:
             
             #tu coming route toi uu, sua planning route
             self.planning_route = copy.deepcopy(self.best_solution)
-            print("SOLUTION")
-            self.print_routeTD(self.best_solution)
-            print("SOLUTION")
+            # print("SOLUTION")
+            # self.print_routeTD(self.best_solution)
+            # print("SOLUTION")
 
             #check condition to update present_route
             '''
@@ -544,20 +544,20 @@ class TD_DACO:
 
 
 
-            print("TIMESTEP: ", time)
-            print("PRESENT")
-            self.print_routeTD(self.present_route)
-            print(self.calculate_solution_distance(self.present_route))
-            print("PRESENT")
-            print("PLANNING")
-            self.print_routeTD(self.planning_route)
-            print(self.calculate_solution_distance(self.planning_route))
-            print("PLANNING")
+            # print("TIMESTEP: ", time)
+            # print("PRESENT")
+            # self.print_routeTD(self.present_route)
+            # print(self.calculate_solution_distance(self.present_route))
+            # print("PRESENT")
+            # print("PLANNING")
+            # self.print_routeTD(self.planning_route)
+            # print(self.calculate_solution_distance(self.planning_route))
+            # print("PLANNING")
 
-            print("HANDLING")
-            print(len(handling_request))
-            self.print_route([handling_request])
-            print("HANDLING")
+            # print("HANDLING")
+            # print(len(handling_request))
+            # self.print_route([handling_request])
+            # print("HANDLING")
 
 
             # rand = random.random()
@@ -569,10 +569,10 @@ class TD_DACO:
 
         for route in self.present_route:
             route.append(self.depot)
-        print("FINAL")
-        self.print_routeTD(self.present_route)
-        print(self.calculate_solution_distance(self.present_route))
-        print("FINAL")
+        # print("FINAL")
+        # self.print_routeTD(self.present_route)
+        # print(self.calculate_solution_distance(self.present_route))
+        # print("FINAL")
 
         self.result = (self.calculate_carbon_emission(self.present_route), (100 - self.count_request(self.present_route)))
 
@@ -880,18 +880,18 @@ class TD_DACO:
                         if time <= route[i][j].start:
                             time = route[i][j].start
                         if time > route[i][j].end:
-                            print('false truck truck', end = ' ')
-                            self.print_route([route[i]])
-                            print('false in ', route[i][j].node)
+                            # print('false truck truck', end = ' ')
+                            # self.print_route([route[i]])
+                            # print('false in ', route[i][j].node)
                             return False
                     else:
                         if route[i][j-2].node == route[i][j].node == 0:
                             time_truck = 0
                         else: time_truck = time + 0 + self.network.links[(route[i][j-2].node, route[i][j].node)] / self.problem.truck.velocity
                         if time_truck > route[i][j].end:
-                            print('false truck drone', end = ' ')
-                            self.print_route([route[i]])
-                            print('false in ', route[i][j].node)
+                            # print('false truck drone', end = ' ')
+                            # self.print_route([route[i]])
+                            # print('false in ', route[i][j].node)
                             return False
                         time_drone = time + 0 + (self.network.links[(route[i][j-2].node, route[i][j-1].node)] + self.network.links[(route[i][j-1].node, route[i][j].node)])/self.problem.drone.velocity
                         time = max(time_truck, time_drone)
@@ -936,5 +936,5 @@ if __name__ == "__main__":
     np.random.seed(1)
     problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c104.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
-    haco = TD_DACO(problem1)
+    haco = INFERV1(problem1)
     print(haco.result)

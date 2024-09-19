@@ -1,5 +1,5 @@
 # Import necessary libraries
-from algorithms.infer import INFER
+from algorithms.inferv1 import INFERV1
 from problemtd import ProblemTD
 
 import csv
@@ -26,14 +26,14 @@ if not os.path.exists(output_file_path):
 
 # Loop over the seed values and file names
 for file_name in file_list:
-    for seed in range(1, 11):
+    for seed in range(1, 6):
         np.random.seed(seed)  # Set the seed
 
         # Load the problem using the correct path for Kaggle
         problem1 = ProblemTD(os.path.join(input_dir, file_name))
         
         # Initialize and run the INFER algorithm
-        haco = INFER(problem1)
+        haco = INFERV1(problem1)
         result = haco.result  # Get the result
 
         # Append the seed to the result and write it to the CSV file immediately

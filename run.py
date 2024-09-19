@@ -1,4 +1,4 @@
-from algorithms.infer import INFER
+from algorithms.inferv1 import INFERV1
 from problemtd import ProblemTD
 
 import csv
@@ -13,10 +13,10 @@ import numpy as np
 #              'h100rc101.csv', 'h100rc102.csv', 'h100rc103.csv', 'h100rc104.csv', 'h100rc105.csv', 'h100rc106.csv', 'h100rc107.csv', 'h100rc108.csv', 
 #              'h100rc201.csv', 'h100rc202.csv', 'h100rc203.csv', 'h100rc204.csv', 'h100rc205.csv', 'h100rc206.csv', 'h100rc207.csv', 'h100rc208.csv']
 
-file_list = ['h100r101.csv', 'h100r102.csv', 'h100r103.csv', 'h100r104.csv', 'h100r105.csv', 'h100r106.csv', 'h100r107.csv', 
-             'h100r108.csv', 'h100r109.csv', 'h100r110.csv', 'h100r111.csv', 'h100r112.csv']
+# file_list = ['h100r101.csv', 'h100r102.csv', 'h100r103.csv', 'h100r104.csv', 'h100r105.csv', 'h100r106.csv', 'h100r107.csv', 
+#              'h100r108.csv', 'h100r109.csv', 'h100r110.csv', 'h100r111.csv', 'h100r112.csv']
 
-# file_list = ['h100c104.csv', 'h100c109.csv']
+file_list = ['h100c109.csv']
 
 # Ensure the file is created and write the header
 file_path = 'new_final_csv.csv'
@@ -32,7 +32,7 @@ for file_name in file_list:
         np.random.seed(seed)  # Set the seed
 
         problem1 = ProblemTD("F:/CodingEnvironment/dvrpsd/data/dvrptw/100/" + file_name)
-        haco = INFER(problem1)
+        haco = INFERV1(problem1)
         result = haco.result  # Get the result
 
         # Append the seed to the result and write it to the file immediately
