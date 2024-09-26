@@ -35,7 +35,7 @@ class TD_DACO:
 
 
 
-        print("co tac dung", self.cotacdung)
+        # print("co tac dung", self.cotacdung)
         
         
 
@@ -104,7 +104,7 @@ class TD_DACO:
                     visited.add(next_node.node)
                     remain_capacity -= next_node.demand
 
-                    solution_time += self.network.links[(current_node.node, next_node.node)]/self.problem.truck.velocity
+                    solution_time += self.network.links[(current_node.node, next_node.node)]/self.problem.truck.velocity + self.next_node.servicetime
                     solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                     if remain_capacity < 0:  # Check capacity constraint for vehicle
@@ -345,7 +345,7 @@ class TD_DACO:
             if time % 80 == 0: 
             # if True:
                 self.generate_pheromone()
-                self.update_pheromone([self.best_solution])
+                self.update_single_pheromone([self.best_solution])
 
                 for m in range(self.max_iteration_dynamic): 
                     for ants in range(self.num_ants_dynamic):
@@ -483,7 +483,7 @@ class TD_DACO:
                             self.best_solution = solution
 
                             self.cotacdung += 1
-                            self.update_pheromone([solution])
+                            self.update_single_pheromone([solution])
             
             #tu coming route toi uu, sua planning route
             self.planning_route = copy.deepcopy(self.best_solution)
@@ -745,12 +745,12 @@ class TD_DACO:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
-                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  < request.end:
-                    if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  >= request.start:
+                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.request.servicetime  < request.end:
+                    if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.request.servicetime  >= request.start:
                         total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] )**self.beta  #cong thuc toan hoc cua haco
                         probability.append((request,total))
                     else:
-                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] + (request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity  + solution_time)))**self.beta  #doi request bat dau
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] + (request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity + solution_time )))**self.beta  #doi request bat dau
                         probability.append((request,total))
 
         probability = [(node, prob / total) for node, prob in probability]
@@ -782,6 +782,22 @@ class TD_DACO:
         self.pheromone *= (1 - self.rho)
         self.pheromone += delta_pheromone
         self.pheromone = np.maximum(self.pheromone, 0.0000001)
+
+    def update_single_pheromone(self, solutions):
+        delta_pheromone = np.zeros_like(self.pheromone)
+        for solution in solutions:
+            for i in range(len(solution)):
+                for j in range(len(solution[i])-1):
+                    current_node = solution[i][j]
+                    next_node = solution[i][j+1]
+                    delta_pheromone[current_node.node][next_node.node] += self.q / self.calculate_solution_distance(solution)
+
+        # self.pheromone = np.maximum(0.0000001 , (1 - self.rho) * self.pheromone + delta_pheromone)
+        # self.pheromone = (1 - self.rho) * self.pheromone + delta_pheromone
+
+        self.pheromone += delta_pheromone
+        # self.pheromone = np.maximum(self.pheromone, 0.0000001)
+        
 
         # self.pheromone =  (self.pheromone + delta_pheromone)
 
@@ -933,8 +949,8 @@ class TD_DACO:
         return count
             
 if __name__ == "__main__":
-    np.random.seed(1)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c104.csv")
+    np.random.seed(3)
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = TD_DACO(problem1)
     print(haco.result)

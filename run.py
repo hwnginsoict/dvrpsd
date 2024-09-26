@@ -16,6 +16,8 @@ import numpy as np
 # file_list = ['h100r101.csv', 'h100r102.csv', 'h100r103.csv', 'h100r104.csv', 'h100r105.csv', 'h100r106.csv', 'h100r107.csv', 
 #              'h100r108.csv', 'h100r109.csv', 'h100r110.csv', 'h100r111.csv', 'h100r112.csv']
 
+# test_list = ['h100c101.csv', 'h100c102.csv', 'h100c201.csv', 'h100c202.csv', 'h100r101.csv', 'h100r102.csv', 'h100r201.csv', 'h100r202.csv', 'h100rc101.csv', 'h100rc102.csv', 'h100rc201.csv', 'h100rc202.csv']
+
 file_list = ['h100r104.csv']
 
 # Ensure the file is created and write the header
