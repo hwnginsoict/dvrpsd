@@ -40,10 +40,10 @@ class TD_DACO:
         
 
     def set_parameter(self):
-        self.num_ants_static = 100  #100
-        self.max_iteration_static = 100   #100
+        self.num_ants_static = 10  #100
+        self.max_iteration_static = 10   #100
 
-        self.num_ants_dynamic = 50 #100
+        self.num_ants_dynamic = 30 #100
         self.max_iteration_dynamic = 30 #50
 
         self.alpha = 1
@@ -104,7 +104,7 @@ class TD_DACO:
                     visited.add(next_node.node)
                     remain_capacity -= next_node.demand
 
-                    solution_time += self.network.links[(current_node.node, next_node.node)]/self.problem.truck.velocity + self.next_node.servicetime
+                    solution_time += self.network.links[(current_node.node, next_node.node)]/self.problem.truck.velocity + self.problem.truck.w
                     solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                     if remain_capacity < 0:  # Check capacity constraint for vehicle
@@ -348,6 +348,7 @@ class TD_DACO:
                 self.update_single_pheromone([self.best_solution])
 
                 for m in range(self.max_iteration_dynamic): 
+                    # solutions = []
                     for ants in range(self.num_ants_dynamic):
                         random.shuffle(self.present_route)
 
@@ -364,7 +365,7 @@ class TD_DACO:
                             for j in range(1, len(self.present_route[pointer])):
                                 # print(pointer, j)
                                 # print(self.planning_route[pointer][j-1].node,self.planning_route[pointer][j].node)
-                                route_time += self.network.links[(self.present_route[0][j-1].node,self.present_route[0][j].node)]/self.problem.truck.velocity #@lam o day, tach truck va drone ra
+                                route_time += self.network.links[(self.present_route[0][j-1].node,self.present_route[0][j].node)]/self.problem.truck.velocity + self.problem.truck.w #@lam o day, tach truck va drone ra
                                 route_time = max(route_time, self.present_route[0][j].start)
                             solution_time = route_time
 
@@ -396,7 +397,7 @@ class TD_DACO:
                                 else:
                                     route_time = 0
                                     for j in range(1, len(solution[pointer])):
-                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] / self.problem.truck.velocity
+                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] / self.problem.truck.velocity + self.problem.truck.w
                                         route_time = max(route_time, solution[pointer][j].start)
                                     solution_time = route_time
 
@@ -432,7 +433,7 @@ class TD_DACO:
                             
                             remain_capacity -= next_node.demand
 
-                            solution_time += self.network.links[(current_node.node, next_node.node)] /self.problem.truck.velocity
+                            solution_time += self.network.links[(current_node.node, next_node.node)] /self.problem.truck.velocity + self.problem.truck.w
                             solution_time = max(solution_time, next_node.start) #neu den som thi doi
 
                             if remain_capacity <= 0:  # Check capacity constraint for vehicle
@@ -447,7 +448,7 @@ class TD_DACO:
                                 else:
                                     route_time = 0
                                     for j in range(1, len(solution[pointer])):
-                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] / self.problem.truck.velocity
+                                        route_time += self.network.links[(solution[pointer][j-1].node,solution[pointer][j].node)] / self.problem.truck.velocity + self.problem.truck.w
                                         route_time = max(route_time, solution[pointer][j].start)
                                     solution_time = route_time
 
@@ -527,7 +528,7 @@ class TD_DACO:
                 self.present_route.append([self.depot])
                 check_time1 = 0
                 for j in range(1, len(self.planning_route[i])):
-                    check_time1 += self.network.links[(self.planning_route[i][j-1].node,self.planning_route[i][j].node)] / self.problem.truck.velocity
+                    check_time1 += self.network.links[(self.planning_route[i][j-1].node,self.planning_route[i][j].node)] / self.problem.truck.velocity + self.problem.truck.w
                     check_time1 = max(route_time, self.planning_route[i][j].start)
                     if (check_time1 < time+timestep) or (self.planning_route[i][j].node in assigned) :
                         self.present_route[i].append(self.planning_route[i][j])
@@ -585,7 +586,7 @@ class TD_DACO:
                 # if remain_capacity >= request.demand:
                 pheromone = self.pheromone[(current_node.node,request.node)]
                 distance = self.network.links[(current_node.node,request.node)]
-                waiting = max(request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity  + solution_time) , 0)
+                waiting = max(request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity  + solution_time + self.problem.truck.w) , 0)
                 td_diff = 1
 
                 '''
@@ -599,7 +600,7 @@ class TD_DACO:
                         probability.append((request,total))
                 '''
 
-                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  > request.end:
+                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity + self.problem.truck.w  > request.end:
                     continue
 
                 if remain_capacity < request.demand:
@@ -683,8 +684,8 @@ class TD_DACO:
                 obj = float('inf')
                 if list[i].demand < cap:
                     # print(list[i-1].node, list[i].node, list[i+1].node)
-                    drone_time = self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, list[i+1].node)]  / self.problem.drone.velocity
-                    truck_time = self.network.links[(list[i-1].node, list[i+1].node)]  / self.problem.truck.velocity
+                    drone_time = self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, list[i+1].node)]  / self.problem.drone.velocity + self.problem.drone.w
+                    truck_time = self.network.links[(list[i-1].node, list[i+1].node)]  / self.problem.truck.velocity + self.problem.truck.w
                     obj = abs(truck_time - drone_time)
                     if drone_time > self.problem.drone.endure: 
                         obj = float('inf')
@@ -693,9 +694,9 @@ class TD_DACO:
                 obj = float('inf')
                 if list[i].demand < cap:
                     # print(list[i-1].node, list[i].node)
-                    drone_time =(self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, 0)])  / self.problem.drone.velocity
+                    drone_time =(self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, 0)])  / self.problem.drone.velocity + self.problem.drone.w
                     if list[i-1].node != 0:    
-                        truck_time = self.network.links[(list[i-1].node, 0)]  / self.problem.truck.velocity
+                        truck_time = self.network.links[(list[i-1].node, 0)]  / self.problem.truck.velocity + self.problem.truck.w
                     else: 
                         truck_time = 0
                     obj = abs(truck_time - drone_time)
@@ -723,16 +724,16 @@ class TD_DACO:
         for i in range(1, len(list)):
             if i != len(list)-1:
                 if list[i].demand < cap and list[i-1].service_type == 'truck':
-                    drone_time = (self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, list[i+1].node)])  / self.problem.drone.velocity
-                    truck_time = self.network.links[(list[i-1].node, list[i+1].node)]  / self.problem.truck.velocity
+                    drone_time = (self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, list[i+1].node)])  / self.problem.drone.velocity + self.problem.drone.w
+                    truck_time = self.network.links[(list[i-1].node, list[i+1].node)]  / self.problem.truck.velocity + self.problem.truck.w
                     if drone_time < self.problem.drone.endure: 
                         list[i].to_drone()
                 
             elif list[i].node != 0:
                 if list[i].demand < cap and list[i-1].service_type == 'truck':
-                    drone_time = (self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, 0)])  / self.problem.drone.velocity
+                    drone_time = (self.network.links[(list[i-1].node, list[i].node)]  + self.network.links[(list[i].node, 0)])  / self.problem.drone.velocity + self.problem.drone.w
                     if list[i-1].node != 0:    
-                        truck_time = self.network.links[(list[i-1].node, 0)]  / self.problem.truck.velocity
+                        truck_time = self.network.links[(list[i-1].node, 0)]  / self.problem.truck.velocity + self.problem.truck.w
                     else: 
                         truck_time = 0
                     if drone_time < self.problem.drone.endure: 
@@ -745,12 +746,12 @@ class TD_DACO:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
-                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.request.servicetime  < request.end:
-                    if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.request.servicetime  >= request.start:
+                if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.problem.truck.w  < request.end:
+                    if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.problem.truck.w  >= request.start:
                         total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] )**self.beta  #cong thuc toan hoc cua haco
                         probability.append((request,total))
                     else:
-                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] + (request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity + solution_time )))**self.beta  #doi request bat dau
+                        total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] + (request.end - (self.network.links[(current_node.node,request.node)]/self.problem.truck.velocity + solution_time + self.problem.truck.w)))**self.beta  #doi request bat dau
                         probability.append((request,total))
 
         probability = [(node, prob / total) for node, prob in probability]
@@ -811,6 +812,46 @@ class TD_DACO:
     #             # print(solution[i][j].node, solution[i][j+1].node)
     #             distance += self.network.links[(solution[i][j].node,solution[i][j+1].node)] 
     #     return distance
+
+    # def swap_star(self, solution):
+    #     """
+    #     Perform SwapStar heuristic on a VRP solution by swapping nodes between two routes.
+        
+    #     Args:
+    #     - solution: A list of routes, where each route is a list of Request objects.
+        
+    #     Returns:
+    #     - best_solution: The best solution found after applying the SwapStar heuristic.
+    #     """
+    #     best_solution = solution[:]
+    #     for solut
+    #     best_cost = self.calculate_carbon_emission(best_solution)
+
+    #     # Iterate over all pairs of routes in the solution
+    #     for route1_index in range(len(solution)):
+    #         for route2_index in range(route1_index + 1, len(solution)):
+    #             route1 = solution[route1_index]
+    #             route2 = solution[route2_index]
+                
+    #             # Try swapping every node in route1 with every node in route2
+    #             for i in range(1, len(route1) - 1):
+    #                 for j in range(1, len(route2) - 1):
+    #                     # Perform a swap between the ith node in route1 and the jth node in route2
+    #                     new_route1, new_route2 = route1[:], route2[:]
+    #                     new_route1[i], new_route2[j] = route2[j], route1[i]
+                        
+    #                     # Check if the swap satisfies capacity constraints and improves the cost
+    #                     if valid_route(new_route1) and valid_route(new_route2):
+    #                         new_solution = solution[:]
+    #                         new_solution[route1_index] = new_route1
+    #                         new_solution[route2_index] = new_route2
+    #                         new_cost = solution_cost(new_solution)
+                            
+    #                         if new_cost < best_cost:
+    #                             best_solution = new_solution[:]
+    #                             best_cost = new_cost
+
+    #     return best_solution
 
     
     def calculate_carbon_emission(self, solution): #version 1, only 1 drone for the route
@@ -876,7 +917,7 @@ class TD_DACO:
         for i in range(len(route)):
             time = 0
             for j in range(len(route[i])-1):
-                time = time + 0 + self.network.links[(route[i][j].node, route[i][j+1].node)]/self.problem.truck.velocity
+                time = time + 0 + self.network.links[(route[i][j].node, route[i][j+1].node)]/self.problem.truck.velocity + self.problem.truck.w
                 if time <= route[i][j+1].start:
                     time = route[i][j+1].start
                 if time > route[i][j+1].end:
@@ -892,7 +933,7 @@ class TD_DACO:
                     continue
                 else:
                     if route[i][j-1].service_type == 'truck':
-                        time = time + 0 + self.network.links[(route[i][j-1].node, route[i][j].node)] / self.problem.truck.velocity
+                        time = time + 0 + self.network.links[(route[i][j-1].node, route[i][j].node)] / self.problem.truck.velocity #+ self.problem.truck.w
                         if time <= route[i][j].start:
                             time = route[i][j].start
                         if time > route[i][j].end:
@@ -903,13 +944,13 @@ class TD_DACO:
                     else:
                         if route[i][j-2].node == route[i][j].node == 0:
                             time_truck = 0
-                        else: time_truck = time + 0 + self.network.links[(route[i][j-2].node, route[i][j].node)] / self.problem.truck.velocity
+                        else: time_truck = time + 0 + self.network.links[(route[i][j-2].node, route[i][j].node)] / self.problem.truck.velocity # + self.problem.truck.w
                         if time_truck > route[i][j].end:
                             print('false truck drone', end = ' ')
                             self.print_route([route[i]])
                             print('false in ', route[i][j].node)
                             return False
-                        time_drone = time + 0 + (self.network.links[(route[i][j-2].node, route[i][j-1].node)] + self.network.links[(route[i][j-1].node, route[i][j].node)])/self.problem.drone.velocity
+                        time_drone = time + 0 + (self.network.links[(route[i][j-2].node, route[i][j-1].node)] + self.network.links[(route[i][j-1].node, route[i][j].node)])/self.problem.drone.velocity + self.problem.drone.w
                         time = max(time_truck, time_drone)
 
         return True
@@ -949,8 +990,8 @@ class TD_DACO:
         return count
             
 if __name__ == "__main__":
-    np.random.seed(3)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
+    np.random.seed(5)
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c104.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = TD_DACO(problem1)
     print(haco.result)
