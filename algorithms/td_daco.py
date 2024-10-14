@@ -27,17 +27,18 @@ class TD_DACO:
         self.set_parameter()
         self.generate_pheromone()
         
-        self.static_routing()
-
-        print("DONE STATIC")
-
-        self.dynamic_routing(40)
+        # self.static_routing()
+        # print("DONE STATIC")
+        # self.dynamic_routing(40)
 
 
 
         # print("co tac dung", self.cotacdung)
         
-        
+    def run(self):
+        self.static_routing()
+        print("DONE STATIC")
+        self.dynamic_routing(40)
 
     def set_parameter(self):
         self.num_ants_static = 100  #100
@@ -84,6 +85,8 @@ class TD_DACO:
                 current_node = self.depot
 
                 while len(visited) < len(self.sta_requests) -1: # + len(self.dyn_requests):  # Visit all customers
+                    # print(len(visited), len(self.sta_requests)-1)
+                    # print(current_node.node)
                     probability = self.generate_probability(current_node, candidate_list, visited, remain_capacity, solution_time)
 
                     if len(probability) == 0:  # Check capacity constraint for vehicle
@@ -746,6 +749,7 @@ class TD_DACO:
         for request in candidate_list: 
             if request.node not in visited:
                 # if remain_capacity >= request.demand:
+                # print(solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.problem.truck.w, request.end)
                 if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.problem.truck.w  < request.end:
                     if solution_time + self.network.links[(current_node.node, request.node)]/self.problem.truck.velocity  + self.problem.truck.w  >= request.start:
                         total += (self.pheromone[(current_node.node,request.node)]**self.alpha)/(self.network.links[(current_node.node,request.node)] )**self.beta  #cong thuc toan hoc cua haco
@@ -755,6 +759,8 @@ class TD_DACO:
                         probability.append((request,total))
 
         probability = [(node, prob / total) for node, prob in probability]
+        # for each in probability:
+        #     print(each[0].node, each[1])
         return probability
     
     def choose_next_node(self, probability):
@@ -991,7 +997,8 @@ class TD_DACO:
             
 if __name__ == "__main__":
     np.random.seed(5)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c104.csv")
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100r101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
     haco = TD_DACO(problem1)
+    haco.run()
     print(haco.result)

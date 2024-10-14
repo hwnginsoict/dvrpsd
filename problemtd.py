@@ -29,7 +29,7 @@ class ProblemTD:
         self.requests = sorted(request, key=lambda x: x.time)
         self.network = Network(self.customers)
 
-        self.truck = Truck(velocity=5/6, capacity=1300, w=10, costf=0.13) 
+        self.truck = Truck(velocity=5/6, capacity=1300, w=5, costf=0.13) 
         self.drone = Drone(velocity=8/6, capacity=15, w=5, costf=0.1, endure=135, launch=5, recover=5)
 
     def generate_sample(self, instance):

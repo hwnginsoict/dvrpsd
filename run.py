@@ -36,6 +36,8 @@ for file_name in file_list:
                 haco.num_ants_dynamic = nidyn
                 haco.max_iteration_dynamic = nidyn
 
+                haco.run()
+
                 end_time = time.time()
                 result = haco.result  # Get the result
                 running_time = end_time - start_time
