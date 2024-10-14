@@ -40,11 +40,11 @@ class TD_DACO:
         
 
     def set_parameter(self):
-        self.num_ants_static = 10  #100
-        self.max_iteration_static = 10   #100
+        self.num_ants_static = 100  #100
+        self.max_iteration_static = 100   #100
 
-        self.num_ants_dynamic = 30 #100
-        self.max_iteration_dynamic = 30 #50
+        self.num_ants_dynamic = 50 #100
+        self.max_iteration_dynamic = 50 #50
 
         self.alpha = 1
         self.beta = 2

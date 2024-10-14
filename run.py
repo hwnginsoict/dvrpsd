@@ -14,7 +14,7 @@ file_path = 'finetune_static.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['file_name', 'seed', 'td', 'rd', 'time'])  # Add seed column to the header
+        writer.writerow(['file_name', 'seed', 'ni sta', 'ni dyn', 'td', 'rd', 'time'])  # Add seed column to the header
 
 # Start measuring time
 # start_time = time.time()
@@ -22,21 +22,29 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 for file_name in file_list:
     for seed in [1,2,3]:
-        np.random.seed(seed)  # Set the seed
+        for nista in [10,20,50,100]:
+            for nidyn in [10,20,30]:
+                np.random.seed(seed)  # Set the seed
 
-        # Solve the problem and get the result
-        problem1 = ProblemTD("F:/CodingEnvironment/dvrpsd/data/dvrptw/100/" + file_name)
-        start_time = time.time()
-        haco = TD_DACO(problem1)
-        end_time = time.time()
-        result = haco.result  # Get the result
-        running_time = end_time - start_time
+                # Solve the problem and get the result
+                problem1 = ProblemTD("F:/CodingEnvironment/dvrpsd/data/dvrptw/100/" + file_name)
+                start_time = time.time()
+                haco = TD_DACO(problem1)
+
+                haco.num_ants_static = nista
+                haco.max_iteration_static = nista
+                haco.num_ants_dynamic = nidyn
+                haco.max_iteration_dynamic = nidyn
+
+                end_time = time.time()
+                result = haco.result  # Get the result
+                running_time = end_time - start_time
 
 
-        # Write results to the CSV file
-        with open(file_path, mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([file_name, seed, result[0], result[1], running_time])  # Include seed in the result
+                # Write results to the CSV file
+                with open(file_path, mode='a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([file_name, seed, result[0], result[1], running_time])  # Include seed in the result
 
 # End time measurement
 # end_time = time.time()
