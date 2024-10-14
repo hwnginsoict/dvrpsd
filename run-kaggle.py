@@ -42,7 +42,7 @@ for file_name in file_list:
                 np.random.seed(seed)  # Set the seed
 
                 # Solve the problem and get the result
-                problem1 = ProblemTD("F:/CodingEnvironment/dvrpsd/data/dvrptw/100/" + file_name)
+                problem1 = ProblemTD("/kaggle/input/dvrptw/dvrptw/100/" + file_name)
                 start_time = time.time()
                 haco = TD_DACO(problem1)
 
