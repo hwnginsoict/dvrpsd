@@ -334,7 +334,7 @@ class TD_DACO:
             self.drone_routing(heuristic_route)
             self.best_solution = heuristic_route
             self.best_distance = self.calculate_solution_distance(heuristic_route)
-            if self.best_distance == float('inf'): raise Exception
+            # if self.best_distance == float('inf'): raise Exception
 
             print("PLANNING")
             self.print_routeTD(self.planning_route)
