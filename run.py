@@ -7,10 +7,10 @@ import numpy as np
 import time  # Add this to track time
 
 # List of files
-file_list = ['h100r101.csv', 'h100c101.csv', 'h100r201.csv', 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
+file_list = [ 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
 
 # Ensure the file is created and write the header
-file_path = 'finetune_static.csv'
+file_path = 'collected.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -23,7 +23,7 @@ if not os.path.exists(file_path):
 for file_name in file_list:
     for seed in [1,2,3]:
         for nista in [10,20,50,100]:
-            for nidyn in [10,20,30]:
+            for nidyn in [1,2,5,10,20,30]:
                 np.random.seed(seed)  # Set the seed
 
                 # Solve the problem and get the result
@@ -46,7 +46,7 @@ for file_name in file_list:
                 # Write results to the CSV file
                 with open(file_path, mode='a', newline='') as file:
                     writer = csv.writer(file)
-                    writer.writerow([file_name, seed, result[0], result[1], running_time])  # Include seed in the result
+                    writer.writerow([file_name, seed,nista,nidyn, result[0], result[1], running_time])  # Include seed in the result
 
 # End time measurement
 # end_time = time.time()

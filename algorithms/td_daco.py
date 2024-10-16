@@ -41,11 +41,11 @@ class TD_DACO:
         self.dynamic_routing(40)
 
     def set_parameter(self):
-        self.num_ants_static = 100  #100
-        self.max_iteration_static = 100   #100
+        self.num_ants_static = 10  #100
+        self.max_iteration_static = 10  #100
 
-        self.num_ants_dynamic = 50 #100
-        self.max_iteration_dynamic = 50 #50
+        self.num_ants_dynamic = 10 #100
+        self.max_iteration_dynamic = 10 #50
 
         self.alpha = 1
         self.beta = 2
@@ -345,7 +345,7 @@ class TD_DACO:
 
             
             # xu li dinh tuyen lai bang ACO, xu li tren coming_route
-            if time % 80 == 0: 
+            if time % 10 == 0: 
             # if True:
                 self.generate_pheromone()
                 self.update_single_pheromone([self.best_solution])
@@ -864,12 +864,12 @@ class TD_DACO:
         if not (self.check_capacity(solution, self.max_capacity)): 
             # print("BUG")
             # self.print_routeTD(solution)
-            raise Exception #capacity constraint
-            # return float('inf')
+            # raise Exception #capacity constraint
+            return float('inf')
         if not (self.check_timeTD(solution)): 
             # print("BUG")
-            self.print_route(solution)
-            raise Exception #time window constraint
+            # self.print_route(solution)
+            # raise Exception #time window constraint
             return float('inf')
         # carbon_emission = 0
         truck_length= 0
@@ -997,8 +997,8 @@ class TD_DACO:
             
 if __name__ == "__main__":
     np.random.seed(5)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100r101.csv")
-    # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000C1_10_1.csv")
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
+    # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000R1_10_2.csv")
     haco = TD_DACO(problem1)
     haco.run()
     print(haco.result)
