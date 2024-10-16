@@ -38,13 +38,13 @@ if not os.path.exists(file_path):
 for file_name in file_list:
     for seed in [1,2,3]:
         for nista in [10,20,50,100]:
-            for nidyn in [1,2,5,10,20,30]:
+            for nidyn in [5,10,20,30]:
                 np.random.seed(seed)  # Set the seed
 
                 # Solve the problem and get the result
                 problem1 = ProblemTD("/kaggle/input/dvrptw/dvrptw/100/" + file_name)
                 start_time = time.time()
-                haco = INFERV1(problem1)
+                haco = TD_DACO(problem1)
 
                 haco.num_ants_static = nista
                 haco.max_iteration_static = nista
