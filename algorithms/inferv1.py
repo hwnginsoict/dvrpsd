@@ -27,17 +27,11 @@ class INFERV1:
         self.set_parameter()
         self.generate_pheromone()
         
+        
+    def run(self):
         self.static_routing()
-
         print("DONE STATIC")
-
         self.dynamic_routing(40)
-
-
-
-        print("co tac dung", self.cotacdung)
-        
-        
 
     def set_parameter(self):
         self.num_ants_static = 100  #100

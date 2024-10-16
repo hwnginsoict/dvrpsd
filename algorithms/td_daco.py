@@ -956,7 +956,7 @@ class TD_DACO:
                             self.print_route([route[i]])
                             print('false in ', route[i][j].node)
                             return False
-                        time_drone = time + 0 + (self.network.links[(route[i][j-2].node, route[i][j-1].node)] + self.network.links[(route[i][j-1].node, route[i][j].node)])/self.problem.drone.velocity + self.problem.drone.w
+                        time_drone = time + 0 + (self.network.links[(route[i][j-2].node, route[i][j-1].node)] + self.network.links[(route[i][j-1].node, route[i][j].node)])/self.problem.drone.velocity # + self.problem.drone.w
                         time = max(time_truck, time_drone)
 
         return True
