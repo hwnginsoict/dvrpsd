@@ -152,8 +152,8 @@ list = [
 list_name = ['C1', 'C2', 'R1', 'R2', 'RC1', 'RC2']
 for name in list_name:
     for i in range(1,11):
-        data_gen = DataGenerate(kind='solomon', instance= str('F:\\CodingEnvironment\\dvrpsd\\data\\Solomon\\1000\\' + name + '_10_' + str(i) + '.TXT'))
-        data_gen.export_to_csv('F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000', str('h1000' + name + '_10_' + str(i) + '.csv'))
+        data_gen = DataGenerate(kind='solomon', instance= str('F:\\CodingEnvironment\\dvrpsd\\data\\Solomon\\600\\' + name + '_6_' + str(i) + '.TXT'))
+        data_gen.export_to_csv('F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\600', str('h600' + name + '_6_' + str(i) + '.csv'))
 
 
 

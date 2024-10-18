@@ -8,7 +8,7 @@ import time  # Add this to track time
 
 # List of files
 # file_list = [ 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
-file_list = ['h100r201.csv']
+file_list = ['h100c101.csv']
 
 # Ensure the file is created and write the header
 file_path = 'collected1.csv'
@@ -22,9 +22,9 @@ if not os.path.exists(file_path):
 
 # Loop over the seed values and files
 for file_name in file_list:
-    for seed in [2,3]:
-        for nista in [20,50,100]:
-            for nidyn in [1,2,5,10,20,30]:
+    for seed in [1,2,3]:
+        for nista in [10,20,50,100]:
+            for nidyn in [5,10,20,30]:
                 np.random.seed(seed)  # Set the seed
 
                 # Solve the problem and get the result
