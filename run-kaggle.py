@@ -1,7 +1,7 @@
 # Import necessary libraries
 from algorithms.inferv1 import INFERV1
 # from algorithms.td_daco import 
-from algorithms.inferv1 import INFER_V2
+from algorithms.inferv2 import INFER_V2
 from problemtd import ProblemTD
 
 import csv
