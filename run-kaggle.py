@@ -9,8 +9,11 @@ import os
 import numpy as np
 import time
 
+
+n = 2
+
 # Define the input directory where the CSV files are stored in the Kaggle environment
-input_dir = '/kaggle/working/dvrpsd/data/dvrptw/400/'  # Change this to the correct dataset path in Kaggle
+input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + n + '00/'  # Change this to the correct dataset path in Kaggle
 
 # List of files to process
 # file_list = ['h100r201.csv', 'h100r202.csv', 'h100r203.csv', 'h100r204.csv', 'h100r205.csv', 'h100r206.csv']
@@ -38,9 +41,9 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 
 # for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-for type in ['C1', 'R1']:
+for type in ['C1']:
     for i in range(1,11):
-        file_name = 'h400'+ type + '_4_' + str(i) + '.csv'
+        file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
         for seed in range(1, 6):
             np.random.seed(seed)  # Set the seed
 
@@ -65,6 +68,6 @@ for type in ['C1', 'R1']:
             with open(file_path, mode='a', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow([file_name, seed, result[0], result[1], running_time])  # Include seed in the result
-
+                print(file_name, seed, result[0], result[1], running_time)
 
 print("Results have been written to", output_file_path)
