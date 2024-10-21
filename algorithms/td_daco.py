@@ -41,11 +41,11 @@ class TD_DACO:
         self.dynamic_routing(40)
 
     def set_parameter(self):
-        self.num_ants_static = 10  #100
-        self.max_iteration_static = 10  #100
+        self.num_ants_static = 50  #100
+        self.max_iteration_static = 50  #100
 
-        self.num_ants_dynamic = 10 #100
-        self.max_iteration_dynamic = 10 #50
+        self.num_ants_dynamic = 30 #100
+        self.max_iteration_dynamic = 30 #50
 
         self.alpha = 1
         self.beta = 2
@@ -578,7 +578,7 @@ class TD_DACO:
         print(self.calculate_solution_distance(self.present_route))
         print("FINAL")
 
-        self.result = (self.calculate_carbon_emission(self.present_route), (100 - self.count_request(self.present_route)))
+        self.result = (self.calculate_carbon_emission(self.present_route), (200 - self.count_request(self.present_route)))
 
     def dyn_generate_probability(self, current_node, candidate_list, visited, remain_capacity, solution_time, timetime):
         probability = list()
@@ -997,7 +997,7 @@ class TD_DACO:
             
 if __name__ == "__main__":
     np.random.seed(5)
-    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
+    problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\200\\h200c1_2_1.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000R1_10_2.csv")
     haco = TD_DACO(problem1)
     haco.run()
