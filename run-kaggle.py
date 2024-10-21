@@ -21,7 +21,7 @@ input_dir = '/kaggle/working/dvrpsd/data/dvrptw/200/'  # Change this to the corr
 
 # file_list = ['h100c205.csv', 'h100c206.csv', 'h100c207.csv', 'h100c208.csv']
 
-file_list = [ 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
+# file_list = [ 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
 
 # Output file path
 output_file_path = '/kaggle/working/result2110.csv'
@@ -36,34 +36,34 @@ if not os.path.exists(file_path):
 # start_time = time.time()
 
 # Loop over the seed values and files
-for file_name in file_list:
-    for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-        for i in range(1,11):
-            file_name = 'h200'+ type + str(i) + '.csv'
-            for seed in range(1, 6):
-                np.random.seed(seed)  # Set the seed
 
-                # Solve the problem and get the result
-                problem1 = ProblemTD(input_dir + file_name)
-                start_time = time.time()
-                haco = INFER_V2(problem1)
+for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+    for i in range(1,11):
+        file_name = 'h200'+ type + '_2_' + str(i) + '.csv'
+        for seed in range(1, 6):
+            np.random.seed(seed)  # Set the seed
 
-                haco.num_ants_static = 50
-                haco.max_iteration_static = 50
-                haco.num_ants_dynamic = 30
-                haco.max_iteration_dynamic = 30
+            # Solve the problem and get the result
+            problem1 = ProblemTD(input_dir + file_name)
+            start_time = time.time()
+            haco = INFER_V2(problem1)
 
-                haco.run()
+            haco.num_ants_static = 50
+            haco.max_iteration_static = 50
+            haco.num_ants_dynamic = 30
+            haco.max_iteration_dynamic = 30
 
-                end_time = time.time()
-                result = haco.result  # Get the result
-                running_time = end_time - start_time
+            haco.run()
+
+            end_time = time.time()
+            result = haco.result  # Get the result
+            running_time = end_time - start_time
 
 
-                # Write results to the CSV file
-                with open(file_path, mode='a', newline='') as file:
-                    writer = csv.writer(file)
-                    writer.writerow([file_name, seed, result[0], result[1], running_time])  # Include seed in the result
+            # Write results to the CSV file
+            with open(file_path, mode='a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([file_name, seed, result[0], result[1], running_time])  # Include seed in the result
 
 
 print("Results have been written to", output_file_path)
