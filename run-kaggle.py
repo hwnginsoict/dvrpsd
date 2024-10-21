@@ -37,7 +37,7 @@ if not os.path.exists(file_path):
 
 # Loop over the seed values and files
 
-for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+for type in ['C1', 'R1', 'RC1']:
     for i in range(1,11):
         file_name = 'h200'+ type + '_2_' + str(i) + '.csv'
         for seed in range(1, 6):
