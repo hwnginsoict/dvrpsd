@@ -31,7 +31,7 @@ output_file_path = '/kaggle/working/dvrpsd/result2110.csv'
 
 file_path = 'finetune_static.csv'
 
-file_path = '/kaggle/working/dvrpsd/result2110.csv'
+file_path = '/kaggle/working/dvrpsd/remain2110.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -44,9 +44,9 @@ if not os.path.exists(file_path):
 
 # for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
 for type in ['RC2']:
-    for i in range(1,11):
+    for i in range(5,11):
         file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
-        for seed in range(1, 4):
+        for seed in range(1, 3):
             np.random.seed(seed)  # Set the seed
 
             # Solve the problem and get the result
