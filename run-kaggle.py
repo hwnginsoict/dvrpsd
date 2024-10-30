@@ -43,8 +43,8 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 
 # for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-for type in ['C2']:
-    for i in range(4,11):
+for type in ['RC2']:
+    for i in range(8,11):
         file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
         for seed in range(1, 3):
             np.random.seed(seed)  # Set the seed
