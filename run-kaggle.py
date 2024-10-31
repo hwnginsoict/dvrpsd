@@ -58,7 +58,7 @@ for type in ['C1']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
                     for seed in range(1,4):
                         haco_temp = copy.deepcopy(haco)
 
-                        np.random.seed(seed)  # Set the seed
+                        np.random.seed(seed)  # Set the seed anh lam
 
                         # Solve the problem and get the result
                         haco_temp.num_ants_dynamic = ited
