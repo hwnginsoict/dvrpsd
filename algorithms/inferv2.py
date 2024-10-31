@@ -35,9 +35,10 @@ class INFER_V2:
 
         # print("co tac dung", self.cotacdung)
         
-    def run(self):
+    def run_static(self):
         self.static_routing()
         print("DONE STATIC")
+    def run_dynamic(self):
         self.dynamic_routing(40)
 
     def set_parameter(self):

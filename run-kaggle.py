@@ -50,6 +50,7 @@ for type in ['C1']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
 
             haco.num_ants_static = 50
             haco.max_iteration_static = 50
+            haco.run_static()
 
             for ited in [5,10,20,30]:
                 for sized in [5,10,20,30]:
@@ -64,7 +65,7 @@ for type in ['C1']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
                         haco_temp.max_iteration_dynamic = sized
                         start_time = time.time()
 
-                        haco_temp.run()
+                        haco_temp.run_dynamic()
 
                         end_time = time.time()
                         result = haco_temp.result  # Get the result

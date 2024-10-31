@@ -35,7 +35,7 @@ class TD_DACO:
 
         # print("co tac dung", self.cotacdung)
         
-    def run(self):
+    def run_static(self):
         self.static_routing()
         print("DONE STATIC")
         self.dynamic_routing(40)
