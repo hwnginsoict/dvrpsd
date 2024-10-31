@@ -43,6 +43,7 @@ if not os.path.exists(file_path):
 for type in ['C1']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
     for n in [1,2,4]:
         for i in range(1,3):
+            input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
             file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
             problem1 = ProblemTD(input_dir + file_name)
             haco = INFER_V2(problem1)
