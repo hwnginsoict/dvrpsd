@@ -32,7 +32,7 @@ file_path = '/kaggle/working/dvrpsd/compare_params.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['file_name', 'seed', 'td', 'rd', 'time'])  # Add seed column to the header
+        writer.writerow(['file_name', 'seed', 'ited', 'sized', 'td', 'rd', 'time'])  # Add seed column to the header
 
 # Start measuring time
 # start_time = time.time()
@@ -58,11 +58,11 @@ for type in ['C1']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
                     for seed in range(1,4):
                         haco_temp = copy.deepcopy(haco)
 
-                        np.random.seed(seed)  # Set the seed anh lam
+                        np.random.seed(seed)  # Set the seed 
 
                         # Solve the problem and get the result
-                        haco_temp.num_ants_dynamic = ited
-                        haco_temp.max_iteration_dynamic = sized
+                        haco_temp.num_ants_dynamic = sized
+                        haco_temp.max_iteration_dynamic = ited
                         start_time = time.time()
 
                         haco_temp.run_dynamic()
@@ -75,7 +75,7 @@ for type in ['C1']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
                         # Write results to the CSV file
                         with open(file_path, mode='a', newline='') as file:
                             writer = csv.writer(file)
-                            writer.writerow([file_name, seed, result[0], result[1], running_time])  # Include seed in the result
-                            print(file_name, seed, result[0], result[1], running_time)
+                            writer.writerow([file_name, seed, ited, sized, result[0], result[1], running_time])  # Include seed in the result
+                            print(file_name, seed, ited, sized, result[0], result[1], running_time)
 
 print("Results have been written to", file_path)
