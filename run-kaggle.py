@@ -40,8 +40,8 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 
 
-for type in ['C2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-    for n in [2,4]:
+for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+    for n in [4]:
         for i in range(1,3):
             input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
             file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
