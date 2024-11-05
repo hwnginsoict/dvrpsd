@@ -43,7 +43,7 @@ if not os.path.exists(file_path):
 # for type in ['R2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
 #     for n in [2]:
 #         for i in range(1,3):
-for type in ['c', 'r', 'rc']:
+for type in ['c', 'r']:
     for hard in [1,2]:
         for i in [1,2]:
             input_dir = '/kaggle/working/dvrpsd/data/dvrptw/100/'
