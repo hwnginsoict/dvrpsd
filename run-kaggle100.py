@@ -47,7 +47,7 @@ for type in ['c', 'r', 'rc']:
     for hard in [1,2]:
         for i in [1,2]:
             input_dir = '/kaggle/working/dvrpsd/data/dvrptw/100/'
-            file_name = 'h100' + type + hard + '0' + str(i) + '.csv'
+            file_name = 'h100' + str(type) + str(hard) + '0' + str(i) + '.csv'
             problem1 = ProblemTD(input_dir + file_name)
             haco = INFER_V2(problem1)
 
