@@ -14,7 +14,7 @@ import copy
 n = 4
 
 # Define the input directory where the CSV files are stored in the Kaggle environment
-input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'  # Change this to the correct dataset path in Kaggle
+# input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'  # Change this to the correct dataset path in Kaggle
 
 # List of files to process
 # file_list = ['h100r201.csv', 'h100r202.csv', 'h100r203.csv', 'h100r204.csv', 'h100r205.csv', 'h100r206.csv']
@@ -28,7 +28,7 @@ input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'  # Change thi
 # file_list = [ 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
 
 # Output file path
-file_path = '/kaggle/working/dvrpsd/compare_params.csv'
+file_path = 'compare_params.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -40,14 +40,11 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 
 
-# for type in ['R2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-#     for n in [2]:
-#         for i in range(1,3):
-for type in ['c', 'r']:
-    for hard in [1,2]:
-        for i in [1,2]:
-            input_dir = '/kaggle/working/dvrpsd/data/dvrptw/100/'
-            file_name = 'h100' + str(type) + str(hard) + '0' + str(i) + '.csv'
+for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+    for n in [2]:
+        for i in [2]:
+            input_dir = 'F:/CodingEnvironment/dvrpsd/data/dvrptw/' + str(n) + '00/'
+            file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
             problem1 = ProblemTD(input_dir + file_name)
             haco = INFER_V2(problem1)
 
@@ -55,10 +52,10 @@ for type in ['c', 'r']:
             haco.max_iteration_static = 50
             haco.run_static()
 
-            for ited in [5,10]:
-                for sized in [5,10,20,30]:
+            for ited in [30]:
+                for sized in [30]:
 
-                    for seed in range(1,4):
+                    for seed in range(3,4):
                         haco_temp = copy.deepcopy(haco)
 
                         np.random.seed(seed)  # Set the seed 
