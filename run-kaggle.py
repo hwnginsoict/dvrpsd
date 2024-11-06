@@ -40,7 +40,7 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 
 
-for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+for type in ['C1']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
     for n in [4]:
         for i in [2]:
             input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
@@ -52,8 +52,8 @@ for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
             haco.max_iteration_static = 50
             haco.run_static()
 
-            for ited in [20,30]:
-                for sized in [5,10,20,30]:
+            for ited in [30]:
+                for sized in [10,20,30]:
 
                     for seed in range(1,4):
                         haco_temp = copy.deepcopy(haco)
