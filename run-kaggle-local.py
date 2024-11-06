@@ -28,7 +28,7 @@ n = 4
 # file_list = [ 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
 
 # Output file path
-file_path = 'compare_params.csv'
+file_path = 'compare_params_remove.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -41,7 +41,7 @@ if not os.path.exists(file_path):
 
 
 for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-    for n in [2]:
+    for n in [4]:
         for i in [2]:
             input_dir = 'F:/CodingEnvironment/dvrpsd/data/dvrptw/' + str(n) + '00/'
             file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
@@ -52,7 +52,7 @@ for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
             haco.max_iteration_static = 50
             haco.run_static()
 
-            for ited in [30]:
+            for ited in [10]:
                 for sized in [30]:
 
                     for seed in range(3,4):
