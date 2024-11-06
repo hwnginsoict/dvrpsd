@@ -40,9 +40,9 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 
 
-for type in ['R2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
     for n in [4]:
-        for i in [1]:
+        for i in [2]:
             input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
             file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
             problem1 = ProblemTD(input_dir + file_name)
@@ -53,9 +53,9 @@ for type in ['R2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
             haco.run_static()
 
             for ited in [30]:
-                for sized in [5,10,20,30]:
+                for sized in [30]:
 
-                    for seed in range(1,4):
+                    for seed in range(2,4):
                         haco_temp = copy.deepcopy(haco)
 
                         np.random.seed(seed)  # Set the seed 
