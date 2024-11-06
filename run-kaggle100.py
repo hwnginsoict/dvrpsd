@@ -82,3 +82,45 @@ for type in ['c', 'r']:
                             print(file_name, seed, ited, sized, result[0], result[1], running_time)
 
 print("Results have been written to", file_path)
+
+
+for type in ['rc']:
+    for hard in [1,2]:
+        for i in [1,2]:
+            input_dir = '/kaggle/working/dvrpsd/data/dvrptw/100/'
+            file_name = 'h100' + str(type) + str(hard) + '0' + str(i) + '.csv'
+            problem1 = ProblemTD(input_dir + file_name)
+            haco = INFER_V2(problem1)
+
+            haco.num_ants_static = 50
+            haco.max_iteration_static = 50
+            haco.run_static()
+
+            for ited in [5,10,20,30]:
+                for sized in [5,10,20,30]:
+
+                    for seed in range(1,4):
+                        haco_temp = copy.deepcopy(haco)
+
+                        np.random.seed(seed)  # Set the seed 
+
+                        # Solve the problem and get the result
+                        haco_temp.num_ants_dynamic = sized
+                        haco_temp.max_iteration_dynamic = ited
+                        start_time = time.time()
+
+                        haco_temp.run_dynamic()
+
+                        end_time = time.time()
+                        result = haco_temp.result  # Get the result
+                        running_time = end_time - start_time
+
+
+                        # Write results to the CSV file
+                        with open(file_path, mode='a', newline='') as file:
+                            writer = csv.writer(file)
+                            writer.writerow([file_name, seed, ited, sized, result[0], result[1], running_time])  # Include seed in the result
+                            print(file_name, seed, ited, sized, result[0], result[1], running_time)
+
+print("Results have been written to", file_path)
+
