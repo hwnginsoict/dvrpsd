@@ -15,7 +15,7 @@ from algorithms.insertion import Insertion
 import random
 import copy
 
-class INFER_V2:
+class INFER_V3:
     def __init__(self, problem):
         self.problem = problem
         self.network = problem.network
@@ -610,10 +610,13 @@ class INFER_V2:
                 if remain_capacity < request.demand:
                     continue
 
-                if waiting == 0:
-                    total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/td_diff)
-                else:
-                    total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/td_diff) * (1/waiting)**0.2
+                # if waiting == 0:
+                #     total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/td_diff)
+                # else:
+                #     total += (pheromone)**self.alpha * (1/distance + 1/waiting)**self.beta * (1/td_diff)
+
+                total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/td_diff)
+
                 probability.append((request, total))
 
 
@@ -1001,7 +1004,7 @@ if __name__ == "__main__":
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\100\\h100c101.csv")
     # problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\1000\\h1000R1_10_2.csv")
     problem1 = ProblemTD("F:\\CodingEnvironment\\dvrpsd\\data\\dvrptw\\200\\h200C1_2_1.csv")
-    haco = INFER_V2(problem1)
+    haco = INFER_V3(problem1)
     haco.run_static()
     haco.run_dynamic()
     print(haco.result)

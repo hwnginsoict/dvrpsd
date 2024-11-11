@@ -2,6 +2,7 @@
 from algorithms.inferv1 import INFERV1
 # from algorithms.td_daco import 
 from algorithms.inferv2 import INFER_V2
+from algorithms.inferv2 import INFER_V3
 from problemtd import ProblemTD
 
 import csv
@@ -28,11 +29,11 @@ input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'  # Change thi
 # file_list = [ 'h100c201.csv', 'h100rc101.csv', 'h100rc201.csv']
 
 # Output file path
-file_path = '/kaggle/working/dvrpsd/compare_params.csv'
+file_path = '/kaggle/working/dvrpsd/compare_algorithms.csv'
 if not os.path.exists(file_path):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['file_name', 'seed', 'ited', 'sized', 'td', 'rd', 'time'])  # Add seed column to the header
+        writer.writerow(['algorithm','file_name', 'seed','td', 'rd', 'time'])  # Add seed column to the header
 
 # Start measuring time
 # start_time = time.time()
@@ -40,80 +41,73 @@ if not os.path.exists(file_path):
 # Loop over the seed values and files
 
 
-for type in ['RC2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-    for n in [4]:
-        for i in [2]:
-            input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
-            file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
-            problem1 = ProblemTD(input_dir + file_name)
-            haco = INFER_V2(problem1)
+for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+    for n in [2]:
+        for i in [1]:
+            for seed in range(2,4):
+                input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
+                file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
+                problem1 = ProblemTD(input_dir + file_name)
+                haco = INFER_V2(problem1)
 
-            haco.num_ants_static = 50
-            haco.max_iteration_static = 50
-            haco.run_static()
+                haco.num_ants_static = 50
+                haco.max_iteration_static = 50
+                haco.run_static()
 
-            for ited in [30]:
-                for sized in [30]:
+                haco_temp = copy.deepcopy(haco)
 
-                    for seed in range(2,4):
-                        haco_temp = copy.deepcopy(haco)
+                np.random.seed(seed)  # Set the seed 
 
-                        np.random.seed(seed)  # Set the seed 
+                # Solve the problem and get the result
+                haco_temp.num_ants_dynamic = 25
+                haco_temp.max_iteration_dynamic = 25
+                start_time = time.time()
 
-                        # Solve the problem and get the result
-                        haco_temp.num_ants_dynamic = sized
-                        haco_temp.max_iteration_dynamic = ited
-                        start_time = time.time()
+                haco_temp.run_dynamic()
 
-                        haco_temp.run_dynamic()
-
-                        end_time = time.time()
-                        result = haco_temp.result  # Get the result
-                        running_time = end_time - start_time
+                end_time = time.time()
+                result = haco_temp.result  # Get the result
+                running_time = end_time - start_time
 
 
-                        # Write results to the CSV file
-                        with open(file_path, mode='a', newline='') as file:
-                            writer = csv.writer(file)
-                            writer.writerow([file_name, seed, ited, sized, result[0], result[1], running_time])  # Include seed in the result
-                            print(file_name, seed, ited, sized, result[0], result[1], running_time)
+                # Write results to the CSV file
+                with open(file_path, mode='a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["inferv2",file_name, seed, result[0], result[1], running_time])  # Include seed in the result
+                    print("inferv2",file_name, seed, result[0], result[1], running_time)
 
-# for type in ['C2']:#, 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-#     for n in [4]:
-#         for i in [1]:
-#             input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
-#             file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
-#             problem1 = ProblemTD(input_dir + file_name)
-#             haco = INFER_V2(problem1)
+for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
+    for n in [2]:
+        for i in [1]:
+            for seed in range(2,4):
+                input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
+                file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
+                problem1 = ProblemTD(input_dir + file_name)
+                haco = INFER_V3(problem1)
 
-#             haco.num_ants_static = 50
-#             haco.max_iteration_static = 50
-#             haco.run_static()
+                haco.num_ants_static = 50
+                haco.max_iteration_static = 50
+                haco.run_static()
+                haco_temp = copy.deepcopy(haco)
 
-#             for ited in [30]:
-#                 for sized in [5,10,20,30]:
+                np.random.seed(seed)  # Set the seed 
 
-#                     for seed in range(1,4):
-#                         haco_temp = copy.deepcopy(haco)
+                # Solve the problem and get the result
+                haco_temp.num_ants_dynamic = 25
+                haco_temp.max_iteration_dynamic = 25
+                start_time = time.time()
 
-#                         np.random.seed(seed)  # Set the seed 
+                haco_temp.run_dynamic()
 
-#                         # Solve the problem and get the result
-#                         haco_temp.num_ants_dynamic = sized
-#                         haco_temp.max_iteration_dynamic = ited
-#                         start_time = time.time()
-
-#                         haco_temp.run_dynamic()
-
-#                         end_time = time.time()
-#                         result = haco_temp.result  # Get the result
-#                         running_time = end_time - start_time
+                end_time = time.time()
+                result = haco_temp.result  # Get the result
+                running_time = end_time - start_time
 
 
-#                         # Write results to the CSV file
-#                         with open(file_path, mode='a', newline='') as file:
-#                             writer = csv.writer(file)
-#                             writer.writerow([file_name, seed, ited, sized, result[0], result[1], running_time])  # Include seed in the result
-#                             print(file_name, seed, ited, sized, result[0], result[1], running_time)
+                # Write results to the CSV file
+                with open(file_path, mode='a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["inferv3",file_name, seed, result[0], result[1], running_time])  # Include seed in the result
+                    print("inferv3",file_name, seed, result[0], result[1], running_time)
 
 print("Results have been written to", file_path)
