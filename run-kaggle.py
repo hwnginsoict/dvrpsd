@@ -13,7 +13,7 @@ import time
 import copy
 
 
-n = 4
+# n = 4
 
 # Define the input directory where the CSV files are stored in the Kaggle environment
 input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'  # Change this to the correct dataset path in Kaggle
@@ -43,13 +43,13 @@ if not os.path.exists(file_path):
 
 
 for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-    for n in [2]:
+    for n in [4]:
         for i in [1]:
             for seed in range(1,4):
                 input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
                 file_name = 'h' + str(n) + '00' + type + '_' + str(n) +'_' + str(i) + '.csv'
                 problem1 = ProblemTD(input_dir + file_name)
-                haco = INFER_V2(problem1)
+                haco = INFER_V3(problem1)
 
                 haco.num_ants_static = 50
                 haco.max_iteration_static = 50
@@ -74,11 +74,11 @@ for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
                 # Write results to the CSV file
                 with open(file_path, mode='a', newline='') as file:
                     writer = csv.writer(file)
-                    writer.writerow(["inferv2",file_name, seed, result[0], result[1], running_time])  # Include seed in the result
-                    print("inferv2",file_name, seed, result[0], result[1], running_time)
+                    writer.writerow(["inferv3",file_name, seed, result[0], result[1], running_time])  # Include seed in the result
+                    print("inferv3",file_name, seed, result[0], result[1], running_time)
 
 for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
-    for n in [2]:
+    for n in [4]:
         for i in [1]:
             for seed in range(1,4):
                 input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
