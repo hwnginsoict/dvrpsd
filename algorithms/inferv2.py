@@ -613,7 +613,7 @@ class INFER_V2:
                 if waiting == 0:
                     total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/td_diff)
                 else:
-                    total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/td_diff) * (1/waiting)**0.2
+                    total += (pheromone)**self.alpha * (1/distance)**self.beta * (1/td_diff) * (1/waiting)
                 probability.append((request, total))
 
 
