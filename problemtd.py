@@ -30,7 +30,7 @@ class ProblemTD:
         self.network = Network(self.customers)
 
         self.truck = Truck(velocity=5/6, capacity=1300, w=5, costf=0.13) 
-        self.drone = Drone(velocity=8/6, capacity=15, w=5, costf=0.1, endure=135, launch=5, recover=5)
+        self.drone = Drone(velocity=8/6, capacity=15, w=5, costf=0.1, endure=135*8/5, launch=5, recover=5)
 
     def generate_sample(self, instance):
         customers = {}
