@@ -41,7 +41,7 @@ if not os.path.exists(file_path):
 
 # Loop over the seed values and files
 
-
+n = 4
 for type in ['C1', 'R1', 'RC1', 'C2', 'R2', 'RC2']:
     for n in [4]:
         for i in [1]:
