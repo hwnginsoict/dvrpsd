@@ -16,7 +16,7 @@ import copy
 # n = 4
 
 # Define the input directory where the CSV files are stored in the Kaggle environment
-input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'  # Change this to the correct dataset path in Kaggle
+# input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'  # Change this to the correct dataset path in Kaggle
 
 # List of files to process
 # file_list = ['h100r201.csv', 'h100r202.csv', 'h100r203.csv', 'h100r204.csv', 'h100r205.csv', 'h100r206.csv']
