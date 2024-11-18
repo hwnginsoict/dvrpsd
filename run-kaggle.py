@@ -49,7 +49,7 @@ for type in ['c1', 'r1', 'rc1', 'c2', 'r2', 'rc2']:
                 input_dir = '/kaggle/working/dvrpsd/data/dvrptw/' + str(n) + '00/'
                 file_name = 'h' + str(n) + '00' + type + '0' + str(i) + '.csv'
                 problem1 = ProblemTD(input_dir + file_name)
-                haco = INFER_V3(problem1)
+                haco = INFER_V2(problem1)
 
                 haco.num_ants_static = 50
                 haco.max_iteration_static = 50
@@ -74,8 +74,8 @@ for type in ['c1', 'r1', 'rc1', 'c2', 'r2', 'rc2']:
                 # Write results to the CSV file
                 with open(file_path, mode='a', newline='') as file:
                     writer = csv.writer(file)
-                    writer.writerow(["inferv3",file_name, seed, result[0], result[1], running_time])  # Include seed in the result
-                    print("inferv3",file_name, seed, result[0], result[1], running_time)
+                    writer.writerow(["inferv2",file_name, seed, result[0], result[1], running_time])  # Include seed in the result
+                    print("inferv2",file_name, seed, result[0], result[1], running_time)
 
 # for type in ['c1', 'r1', 'rc1', 'c2', 'r2', 'rc2']:
 #     for n in [4]:
